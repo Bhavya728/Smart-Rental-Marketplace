@@ -16,34 +16,35 @@ const server = http.createServer(app);
 const PORT = process.env.PORT || 5000;
 
 /* ======================================================
-   FIXED CORS (THE ONLY CORRECT VERSION)
+   OPEN CORS FOR ALL ORIGINS
 ====================================================== */
-
-const allowedOrigins = [
-  "http://localhost:3000",
-  "http://127.0.0.1:3000",
-
-  "https://smart-rental-marketplace-3f95.vercel.app",   // FRONTEND
-  "https://smart-rental-marketplace.vercel.app"  // BACKEND (optional)
-];
 
 app.use((req, res, next) => {
   const origin = req.headers.origin;
 
-  if (allowedOrigins.includes(origin)) {
+  // Allow ANY origin dynamically
+  if (origin) {
     res.header("Access-Control-Allow-Origin", origin);
+  } else {
+    res.header("Access-Control-Allow-Origin", "*");
   }
 
+  // Allow cookies + credentials
   res.header("Access-Control-Allow-Credentials", "true");
+
+  // Allowed headers
   res.header(
     "Access-Control-Allow-Headers",
     "Origin, X-Requested-With, Content-Type, Accept, Authorization"
   );
+
+  // Allowed methods
   res.header(
     "Access-Control-Allow-Methods",
     "GET, POST, PUT, PATCH, DELETE, OPTIONS"
   );
 
+  // Preflight handling
   if (req.method === "OPTIONS") {
     return res.sendStatus(200);
   }
@@ -52,8 +53,9 @@ app.use((req, res, next) => {
 });
 
 /* ======================================================
-   SECURITY
+   SECURITY (Helmet)
 ====================================================== */
+
 app.use(
   helmet({
     crossOriginEmbedderPolicy: false,
@@ -63,8 +65,9 @@ app.use(
 );
 
 /* ======================================================
-   LOGGING
+   REQUEST LOGGING
 ====================================================== */
+
 app.use((req, res, next) => {
   logger.info(`${req.method} ${req.url} from ${req.get("Origin") || "unknown"}`);
   next();
@@ -73,17 +76,19 @@ app.use((req, res, next) => {
 /* ======================================================
    RATE LIMITING
 ====================================================== */
+
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000,
-  max: 200,
-  standardHeaders: true
+  max: 500,
+  standardHeaders: true,
 });
 
 app.use(limiter);
 
 /* ======================================================
-   PARSERS
+   BODY PARSING
 ====================================================== */
+
 app.use(express.json({ limit: "10mb" }));
 app.use(express.urlencoded({ extended: true, limit: "10mb" }));
 app.use(cookieParser());
@@ -93,11 +98,11 @@ app.use(cookieParser());
 ====================================================== */
 
 app.get("/", (req, res) => {
-  res.send("Smart Rental Marketplace Backend is running");
+  res.send("Smart Rental Marketplace Backend is running 🚀");
 });
 
 app.get("/api/health", (req, res) => {
-  res.json({ success: true, message: "Server healthy" });
+  res.json({ success: true, message: "Server is healthy", time: new Date() });
 });
 
 /* ======================================================
@@ -115,29 +120,33 @@ app.use("/api/reviews", require("./routes/reviewRoutes"));
 app.use("/api/admin", require("./routes/adminRoutes"));
 
 /* ======================================================
-   ERRORS
+   GLOBAL ERROR HANDLER
 ====================================================== */
+
 app.use(globalErrorHandler);
 
 /* ======================================================
-   CLOUDINARY
+   CLOUDINARY INITIALIZATION
 ====================================================== */
+
 configureCloudinary();
 
 /* ======================================================
    DATABASE + START SERVER
 ====================================================== */
+
 mongoose
   .connect(process.env.MONGODB_URI)
   .then(() => {
     logger.info("Connected to MongoDB");
 
     server.listen(PORT, () => {
-      logger.info("Server running on port " + PORT);
+      logger.info(`Server running on port ${PORT}`);
+      logger.info("Socket.io ready.");
     });
   })
   .catch((err) => {
-    logger.error("DB Connection Error:", err);
+    logger.error("MongoDB Error:", err);
     process.exit(1);
   });
 
