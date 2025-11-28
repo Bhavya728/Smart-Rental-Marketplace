@@ -78,7 +78,7 @@ const ListingGrid = ({
       <div className={getGridClasses()}>
         {listings.map((listing) => (
           <ListingCard
-            key={listing._id}
+            key={listing._id || listing.id}
             listing={listing}
             viewMode={viewMode}
             showOwnerActions={showOwnerActions}

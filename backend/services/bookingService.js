@@ -181,10 +181,72 @@ class BookingService {
     }
   }
 
-  // Confirm a booking (owner action)
-  async confirmBooking(bookingId, ownerId) {
+  // Approve a booking request (owner action)
+  async approveBooking(bookingId, ownerId) {
     try {
-      const booking = await Booking.findOne({ _id: bookingId, owner_id: ownerId, status: 'pending' });
+      const booking = await Booking.findOne({ 
+        _id: bookingId, 
+        owner_id: ownerId, 
+        status: 'pending_approval' 
+      });
+      
+      if (!booking) {
+        throw new Error('Booking not found or cannot be approved');
+      }
+
+      booking.status = 'approved';
+      booking.approved_at = new Date();
+      await booking.save();
+
+      return await this.getBookingById(bookingId);
+    } catch (error) {
+      throw new Error(`Failed to approve booking: ${error.message}`);
+    }
+  }
+
+  // Reject a booking request (owner action)
+  async rejectBooking(bookingId, ownerId, reason = null) {
+    try {
+      const booking = await Booking.findOne({ 
+        _id: bookingId, 
+        owner_id: ownerId, 
+        status: 'pending_approval' 
+      });
+      
+      if (!booking) {
+        throw new Error('Booking not found or cannot be rejected');
+      }
+
+      // Store booking data for notification before deletion
+      const bookingData = await this.getBookingById(bookingId);
+
+      // Remove the booking entirely when rejected
+      await Booking.findByIdAndDelete(bookingId);
+      
+      console.log(`Booking ${bookingId} has been rejected and removed from system`);
+      
+      // Return the booking data for notification purposes
+      return {
+        ...bookingData.data,
+        status: 'rejected',
+        rejected_at: new Date(),
+        rejection_reason: reason,
+        _isDeleted: true
+      };
+    } catch (error) {
+      throw new Error(`Failed to reject booking: ${error.message}`);
+    }
+  }
+
+  // Confirm a booking after payment (system action)
+  async confirmBooking(bookingId, userId) {
+    try {
+      const booking = await Booking.findOne({ 
+        _id: bookingId, 
+        $or: [{ renter_id: userId }, { owner_id: userId }],
+        status: 'approved' 
+      });
+      
       if (!booking) {
         throw new Error('Booking not found or cannot be confirmed');
       }
@@ -205,7 +267,7 @@ class BookingService {
       const booking = await Booking.findOne({ 
         _id: bookingId, 
         $or: [{ renter_id: userId }, { owner_id: userId }],
-        status: { $in: ['pending', 'confirmed'] }
+        status: { $in: ['pending_approval', 'approved', 'confirmed'] }
       });
 
       if (!booking) {

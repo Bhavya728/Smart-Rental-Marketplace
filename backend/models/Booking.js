@@ -42,13 +42,25 @@ const bookingSchema = new mongoose.Schema({
   },
   status: {
     type: String,
-    enum: ['pending', 'confirmed', 'active', 'completed', 'cancelled'],
-    default: 'pending',
+    enum: ['pending_approval', 'approved', 'rejected', 'confirmed', 'active', 'completed', 'cancelled'],
+    default: 'pending_approval',
     index: true
   },
   payment_id: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Transaction',
+    default: null
+  },
+  approved_at: {
+    type: Date,
+    default: null
+  },
+  rejected_at: {
+    type: Date,
+    default: null
+  },
+  rejection_reason: {
+    type: String,
     default: null
   },
   confirmed_at: {
@@ -132,7 +144,7 @@ bookingSchema.pre('save', function(next) {
 bookingSchema.statics.checkAvailability = async function(listingId, startDate, endDate, excludeBookingId = null) {
   const query = {
     listing_id: listingId,
-    status: { $in: ['pending', 'confirmed', 'active'] },
+    status: { $in: ['approved', 'confirmed', 'active'] },
     $or: [
       {
         start_date: { $lte: startDate },

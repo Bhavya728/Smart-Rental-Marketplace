@@ -38,12 +38,13 @@ const BookingWidget = ({ listing, className = "" }) => {
   }, [startDate, endDate, guestCount, listing]);
 
   const checkAvailability = async () => {
-    if (!startDate || !endDate || !listing._id) return;
+    const listingId = listing?._id || listing?.id;
+    if (!startDate || !endDate || !listingId) return;
 
     setIsCheckingAvailability(true);
     try {
       const response = await bookingService.checkAvailability(
-        listing._id,
+        listingId,
         startDate.toISOString(),
         endDate.toISOString()
       );
@@ -107,9 +108,17 @@ const BookingWidget = ({ listing, className = "" }) => {
       return;
     }
 
+    // Validate listing ID before navigation
+    const listingId = listing?._id || listing?.id;
+    if (!listingId) {
+      console.error('❌ Cannot navigate: Listing ID is missing');
+      alert('Error: Listing data is not fully loaded. Please wait and try again.');
+      return;
+    }
+
     // Navigate to checkout with booking details
     const bookingData = {
-      listing_id: listing._id,
+      listing_id: listingId,
       start_date: startDate.toISOString(),
       end_date: endDate.toISOString(),
       guest_count: guestCount
@@ -119,18 +128,10 @@ const BookingWidget = ({ listing, className = "" }) => {
     console.log('listing._id:', listing._id);
     console.log('listing.id:', listing?.id);
     console.log('listing object:', listing);
-    console.log('Navigation URL:', `/listings/${listing._id}/book`);
+    console.log('Navigation URL:', `/listings/${listingId}/book`);
     console.log('bookingData:', bookingData);
     console.log('==============================');
 
-    // Validate listing ID before navigation
-    if (!listing._id && !listing.id) {
-      console.error('❌ Cannot navigate: Listing ID is missing');
-      alert('Error: Listing data is not fully loaded. Please wait and try again.');
-      return;
-    }
-
-    const listingId = listing._id || listing.id;
     navigate(`/listings/${listingId}/book`, { state: { bookingData, listing, costBreakdown } });
   };
 

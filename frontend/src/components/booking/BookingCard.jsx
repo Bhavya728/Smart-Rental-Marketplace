@@ -21,8 +21,10 @@ const BookingCard = ({
 
   const getStatusColor = (status) => {
     const colors = {
-      pending: 'yellow',
-      confirmed: 'blue',
+      pending_approval: 'yellow',
+      approved: 'blue',
+      rejected: 'red',
+      confirmed: 'green',
       active: 'green',
       completed: 'gray',
       cancelled: 'red'
@@ -32,7 +34,9 @@ const BookingCard = ({
 
   const getStatusText = (status) => {
     const statusMap = {
-      pending: 'Pending Confirmation',
+      pending_approval: 'Awaiting Approval',
+      approved: 'Approved - Pending Payment',
+      rejected: 'Request Declined',
       confirmed: 'Confirmed',
       active: 'Active Stay',
       completed: 'Completed',
@@ -59,7 +63,7 @@ const BookingCard = ({
   };
 
   const canCancel = () => {
-    return ['pending', 'confirmed'].includes(booking.status) && isUpcoming();
+    return ['pending_approval', 'approved', 'confirmed'].includes(booking.status) && isUpcoming();
   };
 
   const canLeaveReview = () => {

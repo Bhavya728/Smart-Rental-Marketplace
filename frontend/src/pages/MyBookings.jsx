@@ -84,6 +84,27 @@ const MyBookings = () => {
     }
   };
 
+  const handleApproveBooking = async (bookingId) => {
+    try {
+      await bookingService.approveBooking(bookingId);
+      loadBookings(); // Reload bookings
+      loadStats(); // Reload stats
+    } catch (error) {
+      alert(error.message);
+    }
+  };
+
+  const handleRejectBooking = async (bookingId) => {
+    const reason = prompt('Please provide a reason for rejection (optional):');
+    try {
+      await bookingService.rejectBooking(bookingId, reason);
+      loadBookings(); // Reload bookings
+      loadStats(); // Reload stats
+    } catch (error) {
+      alert(error.message);
+    }
+  };
+
   const handleConfirmBooking = async (bookingId) => {
     try {
       await bookingService.confirmBooking(bookingId);
@@ -221,6 +242,8 @@ const MyBookings = () => {
                   booking={booking}
                   currentUser={user}
                   onCancel={handleCancelBooking}
+                  onApprove={handleApproveBooking}
+                  onReject={handleRejectBooking}
                   onConfirm={handleConfirmBooking}
                   onComplete={handleCompleteBooking}
                   onViewDetails={(id) => navigate(`/booking-details/${id}`)}
@@ -377,19 +400,34 @@ const MyBookings = () => {
 };
 
 // BookingCard Component
-const BookingCard = ({ booking, currentUser, onCancel, onConfirm, onComplete, onViewDetails, onMessageUser }) => {
+const BookingCard = ({ booking, currentUser, onCancel, onApprove, onReject, onConfirm, onComplete, onViewDetails, onMessageUser }) => {
   const isOwner = booking.owner_id._id === currentUser.id;
   const isRenter = booking.renter_id._id === currentUser.id;
 
   const getStatusColor = (status) => {
     const colors = {
-      pending: 'yellow',
-      confirmed: 'blue', 
+      pending_approval: 'yellow',
+      approved: 'blue',
+      rejected: 'red', 
+      confirmed: 'green', 
       active: 'green',
       completed: 'gray',
       cancelled: 'red'
     };
     return colors[status] || 'gray';
+  };
+
+  const getStatusText = (status) => {
+    const statusMap = {
+      pending_approval: 'Awaiting Approval',
+      approved: 'Approved - Pending Payment',
+      rejected: 'Request Declined',
+      confirmed: 'Confirmed',
+      active: 'Active Stay',
+      completed: 'Completed',
+      cancelled: 'Cancelled'
+    };
+    return statusMap[status] || status.charAt(0).toUpperCase() + status.slice(1);
   };
 
   const formatDate = (dateString) => {
@@ -400,8 +438,9 @@ const BookingCard = ({ booking, currentUser, onCancel, onConfirm, onComplete, on
     });
   };
 
-  const canCancel = ['pending', 'confirmed'].includes(booking.status);
-  const canConfirm = booking.status === 'pending' && isOwner;
+  const canCancel = ['pending_approval', 'approved', 'confirmed'].includes(booking.status);
+  const canApprove = booking.status === 'pending_approval' && isOwner;
+  const canReject = booking.status === 'pending_approval' && isOwner;
   const canComplete = booking.status === 'active' && isOwner;
 
   return (
@@ -418,7 +457,7 @@ const BookingCard = ({ booking, currentUser, onCancel, onConfirm, onComplete, on
           <div className="booking-header">
             <h3>{booking.listing_id?.title}</h3>
             <Badge color={getStatusColor(booking.status)}>
-              {booking.status.charAt(0).toUpperCase() + booking.status.slice(1)}
+              {getStatusText(booking.status)}
             </Badge>
           </div>
 
@@ -474,13 +513,23 @@ const BookingCard = ({ booking, currentUser, onCancel, onConfirm, onComplete, on
             View Details
           </Button>
 
-          {canConfirm && (
+          {canApprove && (
             <Button
-              variant="primary"
+              variant="success"
               size="sm"
-              onClick={() => onConfirm(booking._id)}
+              onClick={() => onApprove(booking._id)}
             >
-              Confirm Booking
+              Approve Request
+            </Button>
+          )}
+
+          {canReject && (
+            <Button
+              variant="danger"
+              size="sm"
+              onClick={() => onReject(booking._id)}
+            >
+              Reject Request
             </Button>
           )}
 
@@ -704,7 +753,8 @@ const EmptyBookingsState = ({ activeTab }) => {
       icon={content.icon}
       title={content.title}
       description={content.description}
-      action={content.action}
+      action={content.action?.onClick || content.action}
+      actionLabel={content.action?.text}
     />
   );
 };

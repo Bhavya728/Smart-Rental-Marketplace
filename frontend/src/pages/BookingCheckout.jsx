@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useParams, useNavigate, useLocation } from "react-router-dom";
+import { useParams, useNavigate, useLocation, useSearchParams } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
 import bookingService from '../services/bookingService';
 import paymentService from '../services/paymentService';
@@ -11,12 +11,17 @@ import Input from '../components/ui/Input';
 import Alert from '../components/ui/Alert';
 import LoadingSpinner from '../components/ui/LoadingSpinner';
 import MockPayment from '../components/booking/MockPayment';
+import ApprovalStep from '../components/booking/ApprovalStep';
 
 const BookingCheckout = () => {
   const { listingId } = useParams();
   const navigate = useNavigate();
   const location = useLocation();
+  const [searchParams] = useSearchParams();
   const { user } = useAuth();
+  
+  // Get booking ID from query params if available (for approved bookings)
+  const existingBookingId = searchParams.get('bookingId');
   
   // Debug URL and params
   console.log('=== BookingCheckout Debug ===');
@@ -24,11 +29,13 @@ const BookingCheckout = () => {
   console.log('Location pathname:', location.pathname);
   console.log('useParams result:', useParams());
   console.log('listingId from params:', listingId);
-  console.log('==========================')
+  console.log('existingBookingId from query:', existingBookingId);
+  console.log('==========================');
 
   const [currentStep, setCurrentStep] = useState(1);
   const [listing, setListing] = useState(null);
   const [bookingData, setBookingData] = useState(null);
+  const [costBreakdown, setCostBreakdown] = useState(null);
   const [booking, setBooking] = useState(null);
   const [transaction, setTransaction] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -55,12 +62,16 @@ const BookingCheckout = () => {
 
   const steps = [
     {
-      title: 'Review & Book',
-      description: 'Confirm your booking details'
+      title: 'Submit Request',
+      description: 'Send booking request to owner'
+    },
+    {
+      title: 'Awaiting Approval',
+      description: 'Owner will review your request'
     },
     {
       title: 'Payment',
-      description: 'Secure payment processing'
+      description: 'Complete payment after approval'
     },
     {
       title: 'Confirmation',
@@ -69,38 +80,164 @@ const BookingCheckout = () => {
   ];
 
   useEffect(() => {
-    
-    // Check if listingId is valid
-    if (!listingId || listingId === 'undefined') {
-      console.error('No valid listingId found in URL parameters. Got:', listingId);
-      setError('Invalid listing ID. Please start from a listing page.');
-      setLoading(false);
-      // Redirect to search page
-      navigate('/search');
-      return;
-    }
-    
-    // Get booking data from navigation state
-    const { bookingData: bookingInfo, costBreakdown: passedCostBreakdown } = location.state || {};
-    if (!bookingInfo) {
-      console.log('No booking data found in navigation state');
-      console.log('This usually happens when accessing URL directly or after refresh');
-      console.log('Redirecting to listing page to start booking flow properly');
-      if (listingId && listingId !== 'undefined') {
-        navigate(`/listings/${listingId}`);
-      } else {
-        navigate('/search');
-      }
-      return;
-    }
+    const initializeCheckout = async () => {
+      try {
+        setLoading(true);
+        setError(null);
 
-    setBookingData(bookingInfo);
-    // Store the cost breakdown for display purposes
-    if (passedCostBreakdown) {
-      console.log('Using passed cost breakdown:', passedCostBreakdown);
-    }
-    loadListing();
-  }, [listingId, location.state, navigate]);
+        // Check if we have an existing approved booking to continue
+        if (existingBookingId) {
+          console.log('🔍 Loading existing approved booking:', existingBookingId);
+          console.log('🧑 Current user ID:', user?.id);
+          
+          try {
+            const bookingResponse = await bookingService.getBookingById(existingBookingId);
+            console.log('📋 Booking API response:', bookingResponse);
+            
+            if (bookingResponse && bookingResponse.success) {
+              const existingBooking = bookingResponse.data;
+              console.log('✅ Existing booking loaded successfully:', existingBooking);
+              console.log('👤 Booking renter ID:', existingBooking.renter_id._id);
+              console.log('📊 Booking status:', existingBooking.status);
+              
+              // Verify this booking belongs to current user and is approved
+              if (existingBooking.renter_id._id === user.id && existingBooking.status === 'approved') {
+                console.log('✅ Booking verification passed - belongs to user and is approved');
+                setBooking(existingBooking);
+                setBookingData({
+                  listing_id: existingBooking.listing_id._id || existingBooking.listing_id.id,
+                  start_date: existingBooking.start_date,
+                  end_date: existingBooking.end_date,
+                  guest_count: existingBooking.guest_count,
+                  special_requests: existingBooking.special_requests || ''
+                });
+                
+                // Load the listing details from the existing booking
+                const bookingListingId = existingBooking.listing_id._id || existingBooking.listing_id.id;
+                console.log('Using listing data from existing booking:', bookingListingId);
+                
+                // Check if we already have the listing data populated in the booking
+                if (existingBooking.listing_id && typeof existingBooking.listing_id === 'object') {
+                  // Listing data is already populated in the booking, use it directly
+                  const listingData = existingBooking.listing_id;
+                  listingData._id = listingData._id || listingData.id; // Ensure _id exists
+                  setListing(listingData);
+                  console.log('Using populated listing data from booking');
+                } else if (bookingListingId) {
+                  // Need to fetch listing data separately
+                  try {
+                    const listingResponse = await listingService.getListingById(bookingListingId);
+                    if (listingResponse && listingResponse.success) {
+                      setListing(listingResponse.data);
+                    } else {
+                      console.error('Failed to load listing for booking:', listingResponse);
+                      setError('Unable to load listing details. Please try again.');
+                      setLoading(false);
+                      return;
+                    }
+                  } catch (listingError) {
+                    console.error('Error fetching listing for existing booking:', listingError);
+                    setError('Unable to load listing information. Please try again.');
+                    setLoading(false);
+                    return;
+                  }
+                } else {
+                  console.error('No valid listing ID found in existing booking');
+                  setError('Invalid listing data in booking');
+                  setLoading(false);
+                  return;
+                }
+                
+                // Skip to payment step since approval is already done
+                console.log('🚀 Initialization complete - setting current step to 3 (payment) since booking is already approved');
+                setCurrentStep(3);
+                setLoading(false);
+                console.log('✅ BookingCheckout initialization successful for existing booking');
+                return;
+              } else {
+                console.error('Booking does not belong to current user or is not approved');
+                setError('Invalid booking or insufficient permissions');
+              }
+            } else {
+              console.error('❌ Booking API response was not successful:', bookingResponse);
+              setError('This booking is no longer available. It may have been cancelled or rejected.');
+              setLoading(false);
+              setTimeout(() => navigate('/my-bookings'), 3000);
+              return;
+            }
+          } catch (bookingError) {
+            console.error('Error loading existing booking:', bookingError);
+            // Check if this is a 404 error (booking was deleted due to rejection)
+            if (bookingError.response?.status === 404) {
+              setError('This booking no longer exists. It may have been cancelled by the owner.');
+              setTimeout(() => navigate('/my-bookings'), 3000);
+            } else {
+              setError('Failed to load booking details. Please try again.');
+            }
+            setLoading(false);
+            return;
+          }
+        }
+
+        // Original flow for new bookings (only if no existing booking)
+        if (!existingBookingId) {
+          // Check if listingId is valid
+          if (!listingId || listingId === 'undefined') {
+            console.error('No valid listingId found in URL parameters. Got:', listingId);
+            setError('Invalid listing ID. Please start from a listing page.');
+            setLoading(false);
+            // Redirect to search page
+            navigate('/search');
+            return;
+          }
+          
+          // Get booking data from navigation state
+          const { bookingData: bookingInfo, costBreakdown: passedCostBreakdown } = location.state || {};
+          if (!bookingInfo) {
+            console.log('No booking data found in navigation state');
+            console.log('This usually happens when accessing URL directly or after refresh');
+            console.log('Redirecting to listing page to start booking flow properly');
+            if (listingId && listingId !== 'undefined') {
+              navigate(`/listings/${listingId}`);
+            } else {
+              navigate('/search');
+            }
+            return;
+          }
+
+          // Set the booking data for new bookings
+          setBookingData(bookingInfo);
+          setCostBreakdown(passedCostBreakdown);
+          
+          // Load the listing for new bookings
+          try {
+            const listingResponse = await listingService.getListingById(listingId);
+            if (listingResponse && listingResponse.success) {
+              setListing(listingResponse.data);
+            } else {
+              console.error('Failed to load listing for new booking:', listingResponse);
+              setError('Unable to load listing details. Please try again.');
+              setLoading(false);
+              return;
+            }
+          } catch (listingError) {
+            console.error('Error loading listing for new booking:', listingError);
+            setError('Unable to load listing information. Please try again.');
+            setLoading(false);
+            return;
+          }
+        }
+
+      } catch (error) {
+        console.error('Error in checkout initialization:', error);
+        setError('Failed to initialize checkout');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    initializeCheckout();
+  }, [listingId, existingBookingId, location.state, navigate, user]);
 
   const loadListing = async () => {
     try {
@@ -156,6 +293,7 @@ const BookingCheckout = () => {
       const response = await bookingService.createBooking(bookingPayload);
       console.log('✅ Booking creation successful:', response);
       setBooking(response.data);
+      // Move to approval step (step 2) instead of payment
       setCurrentStep(2);
     } catch (error) {
       console.error('Booking creation error details:', error);
@@ -213,8 +351,23 @@ const BookingCheckout = () => {
       // Simulate processing delay
       await new Promise(resolve => setTimeout(resolve, 2000));
       
+      // Confirm the booking on the backend
+      console.log('📋 Confirming booking after payment...');
+      try {
+        const confirmResponse = await bookingService.confirmBooking(booking._id);
+        if (confirmResponse.success) {
+          console.log('✅ Booking confirmed successfully');
+          // Update the booking status in our state
+          setBooking({...booking, status: 'confirmed', confirmed_at: new Date()});
+        } else {
+          console.error('Failed to confirm booking:', confirmResponse);
+        }
+      } catch (confirmError) {
+        console.error('Error confirming booking:', confirmError);
+      }
+      
       // Since we're using mock payment, always consider it successful
-      setCurrentStep(3);
+      setCurrentStep(4);
       
       // Redirect to confirmation page after a short delay
       setTimeout(() => {
@@ -278,18 +431,35 @@ const BookingCheckout = () => {
               />
             )}
 
-            {currentStep === 2 && (
-              <PaymentStep
+            {currentStep === 2 && booking && (
+              <ApprovalStep
                 booking={booking}
-                formData={formData}
-                setFormData={setFormData}
-                onSubmit={handlePayment}
-                onError={(errorMessage) => setError(errorMessage)}
-                submitting={submitting}
+                onApprovalStatusChange={(updatedBooking) => {
+                  setBooking(updatedBooking);
+                  // If approved, move to payment step
+                  if (updatedBooking.status === 'approved') {
+                    setCurrentStep(3);
+                  }
+                  // If rejected, show rejection message (stay on step 2)
+                }}
               />
             )}
 
-            {currentStep === 3 && (
+            {currentStep === 3 && booking && booking.status === 'approved' && (
+              <>
+                {console.log('💳 Rendering PaymentStep for booking:', booking._id || booking.id, 'Status:', booking.status)}
+                <PaymentStep
+                  booking={booking}
+                  formData={formData}
+                  setFormData={setFormData}
+                  onSubmit={handlePayment}
+                  onError={(errorMessage) => setError(errorMessage)}
+                  submitting={submitting}
+                />
+              </>
+            )}
+
+            {currentStep === 4 && (
               <BookingSuccess
                 booking={booking}
                 transaction={transaction}

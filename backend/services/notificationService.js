@@ -14,6 +14,71 @@ class NotificationService {
     });
   }
 
+  // Send booking approval notification
+  async sendBookingApproval(booking, renter, owner) {
+    try {
+      const emailData = {
+        to: renter.email,
+        subject: `Booking Request Approved - ${booking.listing_id.title}`,
+        template: 'booking_approval',
+        data: {
+          renterName: `${renter.first_name} ${renter.last_name}`,
+          ownerName: `${owner.first_name} ${owner.last_name}`,
+          listingTitle: booking.listing_id.title,
+          checkIn: booking.start_date.toLocaleDateString(),
+          checkOut: booking.end_date.toLocaleDateString(),
+          totalCost: booking.total_cost,
+          referenceNumber: booking.reference_number,
+          guestCount: booking.guest_count
+        }
+      };
+
+      // In development, just log the email
+      if (process.env.NODE_ENV === 'development') {
+        console.log('📧 Mock Approval Email Sent:', emailData);
+        return { success: true, message: 'Mock approval email sent successfully' };
+      }
+
+      const result = await this.sendEmail(emailData);
+      return result;
+    } catch (error) {
+      console.error('Failed to send booking approval notification:', error);
+      throw new Error(`Failed to send booking approval notification: ${error.message}`);
+    }
+  }
+
+  // Send booking rejection notification
+  async sendBookingRejection(booking, renter, owner, reason = null) {
+    try {
+      const emailData = {
+        to: renter.email,
+        subject: `Booking Request Update - ${booking.listing_id.title}`,
+        template: 'booking_rejection',
+        data: {
+          renterName: `${renter.first_name} ${renter.last_name}`,
+          ownerName: `${owner.first_name} ${owner.last_name}`,
+          listingTitle: booking.listing_id.title,
+          checkIn: booking.start_date.toLocaleDateString(),
+          checkOut: booking.end_date.toLocaleDateString(),
+          referenceNumber: booking.reference_number,
+          rejectionReason: reason || 'No specific reason provided'
+        }
+      };
+
+      // In development, just log the email
+      if (process.env.NODE_ENV === 'development') {
+        console.log('📧 Mock Rejection Email Sent:', emailData);
+        return { success: true, message: 'Mock rejection email sent successfully' };
+      }
+
+      const result = await this.sendEmail(emailData);
+      return result;
+    } catch (error) {
+      console.error('Failed to send booking rejection notification:', error);
+      throw new Error(`Failed to send booking rejection notification: ${error.message}`);
+    }
+  }
+
   // Send booking confirmation email
   async sendBookingConfirmation(booking, renter, owner) {
     try {
@@ -144,7 +209,7 @@ class NotificationService {
     try {
       const emailData = {
         to: owner.email,
-        subject: `New Booking Request - ${booking.listing_id.title}`,
+        subject: `New Booking Request Awaiting Approval - ${booking.listing_id.title}`,
         template: 'new_booking_notification',
         data: {
           ownerName: `${owner.first_name} ${owner.last_name}`,

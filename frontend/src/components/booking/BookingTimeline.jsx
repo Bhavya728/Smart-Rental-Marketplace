@@ -11,27 +11,38 @@ const BookingTimeline = ({
     const steps = [
       {
         id: 'created',
-        title: 'Booking Created',
+        title: 'Request Submitted',
         description: 'Your booking request has been submitted',
         icon: Calendar,
         status: 'completed',
         date: booking.created_at
       },
       {
+        id: 'approval',
+        title: 'Owner Review',
+        description: 'Waiting for owner to review your request',
+        icon: Clock,
+        status: booking.status === 'pending_approval' ? 'pending' :
+               ['approved', 'confirmed', 'active', 'completed'].includes(booking.status) ? 'completed' :
+               booking.status === 'rejected' ? 'cancelled' : 'pending',
+        date: booking.approved_at || booking.rejected_at
+      },
+      {
         id: 'payment',
-        title: 'Payment Processed',
-        description: 'Payment has been successfully processed',
+        title: 'Payment Processing',
+        description: 'Complete your payment to confirm booking',
         icon: CreditCard,
-        status: booking.transaction_id ? 'completed' : 'pending',
+        status: booking.status === 'approved' && !booking.transaction_id ? 'pending' :
+               booking.transaction_id ? 'completed' : 'upcoming',
         date: booking.transaction_id?.created_at
       },
       {
         id: 'confirmed',
         title: 'Booking Confirmed',
-        description: 'Host has confirmed your booking',
+        description: 'Payment processed and booking confirmed',
         icon: Check,
         status: ['confirmed', 'active', 'completed'].includes(booking.status) ? 'completed' : 
-               booking.status === 'pending' ? 'pending' : 'cancelled',
+               booking.status === 'approved' ? 'pending' : 'upcoming',
         date: booking.confirmed_at
       },
       {
@@ -210,10 +221,26 @@ const BookingTimeline = ({
                   </div>
                 )}
 
-                {step.id === 'confirmed' && booking.status === 'pending' && (
+                {step.id === 'approval' && booking.status === 'pending_approval' && (
                   <div className="step-details">
                     <p className="pending-message">
-                      The host typically responds within 24 hours.
+                      The owner typically responds within 24 hours.
+                    </p>
+                  </div>
+                )}
+
+                {step.id === 'approval' && booking.status === 'rejected' && (
+                  <div className="step-details">
+                    <p className="rejection-message">
+                      Request declined: {booking.rejection_reason || 'No reason provided'}
+                    </p>
+                  </div>
+                )}
+
+                {step.id === 'payment' && booking.status === 'approved' && (
+                  <div className="step-details">
+                    <p className="approval-message">
+                      Your request has been approved! Complete payment to confirm your booking.
                     </p>
                   </div>
                 )}

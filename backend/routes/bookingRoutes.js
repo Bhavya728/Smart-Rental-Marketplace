@@ -92,7 +92,27 @@ router.get(
   bookingController.getBookingById
 );
 
-// Confirm a booking (owner only)
+// Approve a booking request (owner only)
+router.patch(
+  '/:bookingId/approve',
+  bookingIdValidation,
+  bookingController.approveBooking
+);
+
+// Reject a booking request (owner only)
+router.patch(
+  '/:bookingId/reject',
+  [
+    ...bookingIdValidation,
+    body('reason')
+      .optional()
+      .isLength({ max: 200 })
+      .withMessage('Rejection reason cannot exceed 200 characters')
+  ],
+  bookingController.rejectBooking
+);
+
+// Confirm a booking after payment (system only)
 router.patch(
   '/:bookingId/confirm',
   bookingIdValidation,

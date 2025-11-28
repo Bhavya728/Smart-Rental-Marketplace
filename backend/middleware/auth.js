@@ -1,7 +1,8 @@
 const jwt = require('jsonwebtoken');
 const { promisify } = require('util');
 const User = require('../models/User');
-const { AppError, catchAsync } = require('../utils/errorHandler');
+const { AppError } = require('../utils/errorHandler');
+const catchAsync = require('../utils/catchAsync');
 const APP_CONSTANTS = require('../config/constants');
 
 // Protect routes - verify JWT token

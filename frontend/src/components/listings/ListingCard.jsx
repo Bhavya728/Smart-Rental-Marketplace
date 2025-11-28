@@ -12,7 +12,7 @@ const ListingCard = ({ listing, onFavorite, onShare, showOwnerActions = false, o
     e.stopPropagation();
     setIsFavorited(!isFavorited);
     if (onFavorite) {
-      onFavorite(listing._id, !isFavorited);
+      onFavorite(listing._id || listing.id, !isFavorited);
     }
   };
 
@@ -26,7 +26,7 @@ const ListingCard = ({ listing, onFavorite, onShare, showOwnerActions = false, o
     e.preventDefault();
     e.stopPropagation();
     if (onEdit) {
-      onEdit(listing._id);
+      onEdit(listing._id || listing.id);
     }
   };
 
@@ -34,7 +34,7 @@ const ListingCard = ({ listing, onFavorite, onShare, showOwnerActions = false, o
     e.preventDefault();
     e.stopPropagation();
     if (onDelete && window.confirm('Are you sure you want to delete this listing?')) {
-      onDelete(listing._id);
+      onDelete(listing._id || listing.id);
     }
   };
 
@@ -180,8 +180,8 @@ const ListingCard = ({ listing, onFavorite, onShare, showOwnerActions = false, o
                   <div className="absolute top-full right-0 mt-2 bg-white/95 backdrop-blur-md rounded-xl shadow-xl border border-white/20 py-2 z-20 min-w-[140px] animate-in slide-in-from-top-2 duration-200">
                     <button
                       onClick={() => {
-                        if (listing._id) {
-                          navigator.clipboard.writeText(window.location.origin + `/listings/${listing._id}`);
+                        if (listing._id || listing.id) {
+                          navigator.clipboard.writeText(window.location.origin + `/listings/${listing._id || listing.id}`);
                         }
                         setShowShareMenu(false);
                       }}
@@ -191,10 +191,10 @@ const ListingCard = ({ listing, onFavorite, onShare, showOwnerActions = false, o
                     </button>
                     <button
                       onClick={() => {
-                        if (navigator.share && listing._id) {
+                        if (navigator.share && (listing._id || listing.id)) {
                           navigator.share({
                             title: listing.title,
-                            url: window.location.origin + `/listings/${listing._id}`
+                            url: window.location.origin + `/listings/${listing._id || listing.id}`
                           });
                         }
                         setShowShareMenu(false);
@@ -243,8 +243,8 @@ const ListingCard = ({ listing, onFavorite, onShare, showOwnerActions = false, o
           </div>
         </div>
 
-        {listing && listing._id ? (
-          <Link to={`/listings/${listing._id}`} className="block">
+        {listing && (listing._id || listing.id) ? (
+          <Link to={`/listings/${listing._id || listing.id}`} className="block">
             <div className="p-6">
               {/* Enhanced Title */}
               <h3 className="text-xl font-bold text-gray-900 mb-3 line-clamp-2 group-hover:bg-gradient-to-r group-hover:from-blue-600 group-hover:to-purple-600 group-hover:bg-clip-text group-hover:text-transparent transition-all duration-300 leading-tight">
@@ -269,7 +269,7 @@ const ListingCard = ({ listing, onFavorite, onShare, showOwnerActions = false, o
                 <div className="flex flex-wrap gap-2 mb-4">
                   {listing.features.slice(0, 3).map((feature, index) => (
                     <span
-                      key={`${listing._id}-feature-${index}-${feature}`}
+                      key={`${listing._id || listing.id}-feature-${index}-${feature}`}
                       className="inline-flex items-center px-3 py-1.5 rounded-lg text-xs font-semibold bg-gradient-to-r from-blue-100 to-purple-100 text-blue-800 border border-blue-200/50 hover:from-blue-200 hover:to-purple-200 transition-colors duration-200"
                     >
                       {feature}

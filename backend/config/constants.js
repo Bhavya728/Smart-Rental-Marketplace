@@ -41,10 +41,13 @@ const APP_CONSTANTS = {
   
   // Booking status
   BOOKING_STATUS: {
-    PENDING: 'pending',
+    PENDING_APPROVAL: 'pending_approval',
+    APPROVED: 'approved',
+    REJECTED: 'rejected',
     CONFIRMED: 'confirmed',
-    CANCELLED: 'cancelled',
+    ACTIVE: 'active',
     COMPLETED: 'completed',
+    CANCELLED: 'cancelled',
   },
   
   // Payment status

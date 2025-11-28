@@ -99,7 +99,7 @@ import Badge from './components/ui/Badge'
 
 // Dashboard Component (keep existing functionality)
 const Dashboard = () => {
-  const { user } = useAuth()
+  const { user, isEmailVerified } = useAuth()
   const navigate = useNavigate()
 
   return (
@@ -134,8 +134,8 @@ const Dashboard = () => {
               </div>
               <div className="flex justify-between">
                 <span className="text-gray-600">Status:</span>
-                <Badge variant={user?.isEmailVerified ? 'success' : 'warning'}>
-                  {user?.isEmailVerified ? 'Verified' : 'Pending'}
+                <Badge variant={isEmailVerified() ? 'success' : 'warning'}>
+                  {isEmailVerified() ? 'Verified' : 'Pending'}
                 </Badge>
               </div>
             </div>
@@ -527,18 +527,6 @@ function App() {
                 <PlaceholderPage 
                   title="Settings" 
                   description="Manage your account settings and preferences." 
-                />
-                <Footer />
-              </>
-            </PrivateRoute>
-          } />
-
-          <Route path="/notifications" element={
-            <PrivateRoute>
-              <>
-                <PlaceholderPage 
-                  title="Notifications" 
-                  description="View and manage your notifications." 
                 />
                 <Footer />
               </>

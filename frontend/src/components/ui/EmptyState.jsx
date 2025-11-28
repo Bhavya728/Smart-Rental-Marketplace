@@ -63,20 +63,6 @@ const EmptyState = ({
         >
           <Icon className="w-full h-full" />
         </motion.div>
-        
-        {/* Decorative circles */}
-        <motion.div
-          initial={{ scale: 0 }}
-          animate={{ scale: 1 }}
-          transition={{ delay: 0.3, duration: 0.4 }}
-          className="absolute -top-2 -right-2 w-4 h-4 bg-primary/20 rounded-full"
-        />
-        <motion.div
-          initial={{ scale: 0 }}
-          animate={{ scale: 1 }}
-          transition={{ delay: 0.4, duration: 0.4 }}
-          className="absolute -bottom-1 -left-1 w-3 h-3 bg-secondary/30 rounded-full"
-        />
       </div>
 
       <motion.h3
@@ -103,18 +89,18 @@ const EmptyState = ({
         {description}
       </motion.p>
 
-      {action && actionLabel && (
+      {action && (
         <motion.div
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.4, duration: 0.3 }}
         >
           <Button
-            onClick={action}
+            onClick={typeof action === 'function' ? action : (typeof action === 'object' && action?.onClick ? action.onClick : undefined)}
             variant="outline"
             size={size}
           >
-            {actionLabel}
+            {actionLabel || (typeof action === 'object' && action?.text ? action.text : 'Continue')}
           </Button>
         </motion.div>
       )}

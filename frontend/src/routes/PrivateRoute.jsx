@@ -4,7 +4,7 @@ import { useAuth } from '../contexts/AuthContext';
 import LoadingSpinner from '../components/ui/LoadingSpinner';
 
 const PrivateRoute = ({ children }) => {
-  const { user, loading } = useAuth();
+  const { user, loading, isEmailVerified } = useAuth();
   const location = useLocation();
 
   // Show loading spinner while checking authentication
@@ -31,7 +31,7 @@ const PrivateRoute = ({ children }) => {
   }
 
   // If user exists but email is not verified, redirect to email verification
-  if (user && !user.isEmailVerified) {
+  if (user && !isEmailVerified()) {
     // Allow access to email verification and logout routes
     if (location.pathname === '/verify-email' || location.pathname === '/logout') {
       return children;

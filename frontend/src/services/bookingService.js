@@ -41,7 +41,32 @@ class BookingService {
     }
   }
 
-  // Confirm a booking (owner action)
+  // Get user's bookings (alias for getUserBookings)
+  async getMyBookings(filters = {}) {
+    return this.getUserBookings(filters);
+  }
+
+  // Approve a booking request (owner action)
+  async approveBooking(bookingId) {
+    try {
+      const response = await api.patch(`/bookings/${bookingId}/approve`);
+      return response.data;
+    } catch (error) {
+      throw this.handleError(error);
+    }
+  }
+
+  // Reject a booking request (owner action)
+  async rejectBooking(bookingId, reason = null) {
+    try {
+      const response = await api.patch(`/bookings/${bookingId}/reject`, { reason });
+      return response.data;
+    } catch (error) {
+      throw this.handleError(error);
+    }
+  }
+
+  // Confirm a booking after payment (system action)
   async confirmBooking(bookingId) {
     try {
       const response = await api.patch(`/bookings/${bookingId}/confirm`);

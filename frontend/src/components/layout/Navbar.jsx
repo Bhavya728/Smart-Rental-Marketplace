@@ -3,6 +3,8 @@ import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { Menu, X, User, LogOut, Settings, Bell, Home, Search, MessageCircle, Star, Plus, Calendar } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
 import Button from '../ui/Button';
+import NotificationCenter from '../notifications/NotificationCenter';
+import RenterNotificationCenter from '../notifications/RenterNotificationCenter';
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -101,7 +103,17 @@ const Navbar = () => {
           {/* Desktop Auth Section */}
           <div className="hidden md:flex items-center space-x-4">
             {user ? (
-              <div className="relative">
+              <div className="flex items-center space-x-4">
+                {/* Show appropriate notification center based on user role */}
+                {user.role === 'owner' && <NotificationCenter />}
+                {user.role === 'renter' && <RenterNotificationCenter />}
+                {user.role === 'both' && (
+                  <>
+                    <NotificationCenter />
+                    <RenterNotificationCenter />
+                  </>
+                )}
+                <div className="relative">
                 <button
                   onClick={() => setShowProfileMenu(!showProfileMenu)}
                   className="flex items-center space-x-2 p-2 rounded-lg hover:bg-gray-100/80 transition-colors duration-200"
@@ -185,13 +197,6 @@ const Navbar = () => {
                       <Settings size={16} />
                       <span>Settings</span>
                     </Link>
-                    <Link
-                      to="/notifications"
-                      className="flex items-center space-x-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100/80 transition-colors duration-200"
-                    >
-                      <Bell size={16} />
-                      <span>Notifications</span>
-                    </Link>
                     <hr className="my-1 border-gray-200" />
                     <button
                       onClick={handleLogout}
@@ -202,6 +207,7 @@ const Navbar = () => {
                     </button>
                   </div>
                 )}
+                </div>
               </div>
             ) : (
               <div className="flex items-center space-x-3">

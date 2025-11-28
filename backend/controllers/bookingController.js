@@ -107,7 +107,71 @@ class BookingController {
     }
   }
 
-  // Confirm booking (owner only)
+  // Approve booking request (owner only)
+  async approveBooking(req, res) {
+    try {
+      const { bookingId } = req.params;
+      const booking = await bookingService.approveBooking(bookingId, req.user.id);
+
+      // Send approval notification to renter
+      try {
+        await notificationService.sendBookingApproval(
+          booking,
+          booking.renter_id,
+          booking.owner_id
+        );
+      } catch (emailError) {
+        console.error('Failed to send approval notification:', emailError);
+      }
+
+      res.status(200).json({
+        success: true,
+        message: 'Booking request approved successfully',
+        data: booking
+      });
+    } catch (error) {
+      console.error('Approve booking error:', error);
+      res.status(400).json({
+        success: false,
+        message: error.message
+      });
+    }
+  }
+
+  // Reject booking request (owner only)
+  async rejectBooking(req, res) {
+    try {
+      const { bookingId } = req.params;
+      const { reason } = req.body;
+      const booking = await bookingService.rejectBooking(bookingId, req.user.id, reason);
+
+      // Send rejection notification to renter
+      try {
+        await notificationService.sendBookingRejection(
+          booking,
+          booking.renter_id,
+          booking.owner_id,
+          reason
+        );
+      } catch (emailError) {
+        console.error('Failed to send rejection notification:', emailError);
+      }
+
+      res.status(200).json({
+        success: true,
+        message: 'Booking request rejected',
+        data: booking
+      });
+    } catch (error) {
+      console.error('Reject booking error:', error);
+      res.status(400).json({
+        success: false,
+        message: error.message
+      });
+    }
+  }
+
+  // Confirm booking after payment (system only)
   async confirmBooking(req, res) {
     try {
       const { bookingId } = req.params;
@@ -126,7 +190,7 @@ class BookingController {
 
       res.status(200).json({
         success: true,
-        message: 'Booking confirmed successfully',
+        message: 'Booking confirmed after payment',
         data: booking
       });
     } catch (error) {
