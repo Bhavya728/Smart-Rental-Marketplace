@@ -1,14 +1,28 @@
 const winston = require('winston');
 const path = require('path');
+const os = require('os');
+const fs = require('fs');
 
-// Create logs directory if it doesn't exist
-const logsDir = path.join(__dirname, '../logs');
+// Determine log directory
+// In Vercel, only /tmp is writable
+const isVercel = process.env.VERCEL === '1' || process.env.NODE_ENV === 'production';
 
-// Define log format
+const logsDir = isVercel
+  ? path.join(os.tmpdir(), 'logs')        // /tmp/logs on Vercel
+  : path.join(__dirname, '../logs');      // local logs folder
+
+// Ensure log directory exists (only where writing is allowed)
+if (!fs.existsSync(logsDir)) {
+  try {
+    fs.mkdirSync(logsDir, { recursive: true });
+  } catch (err) {
+    console.warn("Cannot create log directory:", logsDir, err);
+  }
+}
+
+// Log format
 const logFormat = winston.format.combine(
-  winston.format.timestamp({
-    format: 'YYYY-MM-DD HH:mm:ss'
-  }),
+  winston.format.timestamp({ format: 'YYYY-MM-DD HH:mm:ss' }),
   winston.format.errors({ stack: true }),
   winston.format.json(),
   winston.format.printf(({ timestamp, level, message, stack }) => {
@@ -16,47 +30,45 @@ const logFormat = winston.format.combine(
   })
 );
 
-// Create logger instance
+// Create logger
 const logger = winston.createLogger({
   level: process.env.LOG_LEVEL || 'info',
   format: logFormat,
   defaultMeta: { service: 'smart-rental-api' },
-  transports: [
-    // Write all logs with level 'error' and below to error.log
-    new winston.transports.File({ 
-      filename: path.join(logsDir, 'error.log'), 
-      level: 'error',
-      maxsize: 5242880, // 5MB
-      maxFiles: 5,
-    }),
-    
-    // Write all logs with level 'info' and below to combined.log
-    new winston.transports.File({ 
-      filename: path.join(logsDir, 'combined.log'),
-      maxsize: 5242880, // 5MB
-      maxFiles: 5,
-    }),
-  ],
+  transports: []
 });
 
-// If we're not in production, log to the console with simple format
-if (process.env.NODE_ENV !== 'production') {
-  logger.add(new winston.transports.Console({
-    format: winston.format.combine(
-      winston.format.colorize(),
-      winston.format.simple(),
-      winston.format.printf(({ timestamp, level, message, stack }) => {
-        return `${timestamp} [${level}]: ${stack || message}`;
-      })
-    )
+// -------------------------------
+// File logging only if NOT on Vercel
+// -------------------------------
+if (!isVercel) {
+  logger.add(new winston.transports.File({
+    filename: path.join(logsDir, 'error.log'),
+    level: 'error',
+    maxsize: 5242880,
+    maxFiles: 5
+  }));
+
+  logger.add(new winston.transports.File({
+    filename: path.join(logsDir, 'combined.log'),
+    maxsize: 5242880,
+    maxFiles: 5
   }));
 }
 
-// Create a stream object for Morgan HTTP logging
+// Console logging (works everywhere)
+logger.add(new winston.transports.Console({
+  format: winston.format.combine(
+    winston.format.colorize(),
+    winston.format.printf(({ timestamp, level, message, stack }) => {
+      return `${timestamp} [${level}]: ${stack || message}`;
+    })
+  )
+}));
+
+// Morgan HTTP logging support
 logger.stream = {
-  write: (message) => {
-    logger.info(message.trim());
-  },
+  write: (message) => logger.info(message.trim())
 };
 
 module.exports = logger;
