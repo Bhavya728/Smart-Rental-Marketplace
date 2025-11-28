@@ -4,6 +4,13 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
+# Testing
+tests/
+test/
+*.test.js
+*.spec.js
+coverage/
+
 # Environment variables
 .env
 .env.local
