@@ -1,4 +1,12 @@
 {
+  "name": "smart-rental-marketplace",
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "cd frontend && npm run dev",
+    "build": "cd frontend && npm ci && npm run build && cp -r frontend/dist/* .",
+    "start": "cd backend && npm start"
+  },
   "dependencies": {
     "axios": "^1.13.2",
     "form-data": "^4.0.5"
