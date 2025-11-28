@@ -30,7 +30,7 @@ const corsOptions = {
       'http://localhost:3000',
       'http://127.0.0.1:3000',
       'https://localhost:3000',
-      'https://smart-rental-marketplace.vercel.app/',
+      'https://smart-rental-marketplace-3f95.vercel.app/',
       'https://smart-rental-marketplace.vercel.app/'
     ];
     
