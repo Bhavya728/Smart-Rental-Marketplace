@@ -119,6 +119,10 @@ app.use((req, res, next) => {
   next();
 });
 
+app.get("/",(req,res)=>{
+  res.send("Smart Rental Marketplace Backend is running");
+})
+
 // Health check route
 app.get('/api/health', (req, res) => {
   res.status(200).json({
