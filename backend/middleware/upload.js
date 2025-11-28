@@ -1,154 +1,145 @@
 const multer = require('multer');
 const path = require('path');
+const os = require('os');
+const fs = require('fs');
 const logger = require('../utils/logger');
 const cloudinaryService = require('../services/cloudinaryService');
 
+// Detect Vercel serverless
+const isVercel = process.env.VERCEL === "1" || process.env.NODE_ENV === "production";
+
+// Upload directory
+const uploadDir = isVercel
+  ? path.join(os.tmpdir(), "uploads")                   // /tmp/uploads on Vercel
+  : path.join(__dirname, "../temp/uploads/");           // local folder
+
+// Ensure upload directory exists
+if (!fs.existsSync(uploadDir)) {
+  try {
+    fs.mkdirSync(uploadDir, { recursive: true });
+    logger.info("Created upload directory:", uploadDir);
+  } catch (err) {
+    console.warn("Could not create upload directory:", uploadDir, err);
+  }
+}
+
 /**
- * Multer configuration for file uploads
+ * MULTER SETUP
  */
 
-// Memory storage configuration (files stored in memory as Buffer)
+// Memory storage (safe for cloud uploads)
 const memoryStorage = multer.memoryStorage();
 
-// Disk storage configuration (files stored temporarily on disk)
+// Disk storage (ONLY safe locally or within /tmp)
 const diskStorage = multer.diskStorage({
   destination: (req, file, cb) => {
-    // Use temp directory for temporary storage
-    cb(null, path.join(__dirname, '../temp/uploads/'));
+    cb(null, uploadDir);
   },
   filename: (req, file, cb) => {
-    // Generate unique filename
-    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+    const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
     const ext = path.extname(file.originalname);
-    cb(null, file.fieldname + '-' + uniqueSuffix + ext);
+    cb(null, file.fieldname + "-" + uniqueSuffix + ext);
   }
 });
 
 /**
- * File filter function to validate file types
+ * File filter
  */
-const fileFilter = (allowedTypes = ['image']) => {
-  return (req, file, cb) => {
-    try {
-      const fileType = file.mimetype.split('/')[0];
-      
-      if (allowedTypes.includes(fileType)) {
-        cb(null, true);
-      } else {
-        cb(new Error(`Only ${allowedTypes.join(', ')} files are allowed`), false);
-      }
-    } catch (error) {
-      cb(error, false);
-    }
-  };
+const fileFilter = (allowedTypes = ['image']) => (req, file, cb) => {
+  try {
+    const fileType = file.mimetype.split('/')[0];
+    if (allowedTypes.includes(fileType)) cb(null, true);
+    else cb(new Error(`Only ${allowedTypes.join(', ')} files are allowed`), false);
+  } catch (error) {
+    cb(error, false);
+  }
 };
 
 /**
- * Create multer instance with custom configuration
+ * Create a Multer instance with custom configuration
  */
-const createMulterInstance = (options = {}) => {
-  const {
-    storage = 'memory', // 'memory' or 'disk'
-    fileSize = 5 * 1024 * 1024, // 5MB default
-    allowedTypes = ['image'],
-    fileCount = 1
-  } = options;
-
-  const multerConfig = {
+const createMulterInstance = ({
+  storage = 'memory',
+  fileSize = 5 * 1024 * 1024,
+  allowedTypes = ['image'],
+  fileCount = 1
+} = {}) => {
+  return multer({
     storage: storage === 'disk' ? diskStorage : memoryStorage,
-    limits: {
-      fileSize: fileSize,
-      files: fileCount
-    },
+    limits: { fileSize, files: fileCount },
     fileFilter: fileFilter(allowedTypes)
-  };
-
-  return multer(multerConfig);
+  });
 };
 
-/**
- * Profile photo upload middleware
- */
+// Pre-configured upload middlewares
 const profilePhotoUpload = createMulterInstance({
   storage: 'memory',
-  fileSize: 5 * 1024 * 1024, // 5MB
+  fileSize: 5 * 1024 * 1024,
   allowedTypes: ['image'],
   fileCount: 1
 });
 
-/**
- * Listing photos upload middleware (for future use)
- */
 const listingPhotosUpload = createMulterInstance({
   storage: 'memory',
-  fileSize: 10 * 1024 * 1024, // 10MB per file
+  fileSize: 10 * 1024 * 1024,
   allowedTypes: ['image'],
-  fileCount: 10 // Allow up to 10 photos per listing
+  fileCount: 10
 });
 
-/**
- * Document upload middleware (for future use)
- */
 const documentUpload = createMulterInstance({
   storage: 'memory',
-  fileSize: 5 * 1024 * 1024, // 5MB
-  allowedTypes: ['image', 'application'], // Allow images and PDFs
+  fileSize: 5 * 1024 * 1024,
+  allowedTypes: ['image', 'application'],
   fileCount: 5
 });
 
 /**
- * Middleware to validate uploaded files
+ * File validation middleware
  */
-const validateUpload = (type = 'profile') => {
-  return (req, res, next) => {
-    try {
-      if (!req.file && !req.files) {
-        return res.status(400).json({
-          success: false,
-          message: 'No file uploaded'
-        });
+const validateUpload = (type = 'profile') => (req, res, next) => {
+  try {
+    if (!req.file && !req.files) {
+      return res.status(400).json({ success: false, message: "No file uploaded" });
+    }
+
+    const files = req.files || [req.file];
+    const errors = [];
+
+    files.forEach((file, index) => {
+      const validation = cloudinaryService.validateImageFile(file, type);
+      if (!validation.isValid) {
+        errors.push(`File ${index + 1}: ${validation.errors.join(", ")}`);
       }
+    });
 
-      const files = req.files || [req.file];
-      const errors = [];
-
-      files.forEach((file, index) => {
-        const validation = cloudinaryService.validateImageFile(file, type);
-        if (!validation.isValid) {
-          errors.push(`File ${index + 1}: ${validation.errors.join(', ')}`);
-        }
-      });
-
-      if (errors.length > 0) {
-        return res.status(400).json({
-          success: false,
-          message: 'File validation failed',
-          errors
-        });
-      }
-
-      next();
-    } catch (error) {
-      logger.error('File validation error:', error);
-      res.status(500).json({
+    if (errors.length) {
+      return res.status(400).json({
         success: false,
-        message: 'File validation error',
-        error: error.message
+        message: "File validation failed",
+        errors
       });
     }
-  };
+
+    next();
+  } catch (error) {
+    logger.error("File validation error:", error);
+    res.status(500).json({
+      success: false,
+      message: "File validation error",
+      error: error.message
+    });
+  }
 };
 
 /**
- * Error handling middleware for multer
+ * Multer error handler middleware
  */
 const handleMulterError = (error, req, res, next) => {
   if (error instanceof multer.MulterError) {
-    let message = 'File upload error';
-
+    let message = error.message;
     switch (error.code) {
       case 'LIMIT_FILE_SIZE':
-        message = 'File size is too large';
+        message = 'File size too large';
         break;
       case 'LIMIT_FILE_COUNT':
         message = 'Too many files uploaded';
@@ -156,107 +147,48 @@ const handleMulterError = (error, req, res, next) => {
       case 'LIMIT_UNEXPECTED_FILE':
         message = 'Unexpected file field';
         break;
-      case 'LIMIT_PART_COUNT':
-        message = 'Too many form fields';
-        break;
-      case 'LIMIT_FIELD_KEY':
-        message = 'Field name is too long';
-        break;
-      case 'LIMIT_FIELD_VALUE':
-        message = 'Field value is too long';
-        break;
-      case 'LIMIT_FIELD_COUNT':
-        message = 'Too many form fields';
-        break;
-      default:
-        message = error.message;
     }
-
-    logger.error('Multer error:', error);
-    return res.status(400).json({
-      success: false,
-      message,
-      error: error.code
-    });
+    return res.status(400).json({ success: false, message, error: error.code });
   }
 
-  // Handle other errors
-  if (error.message.includes('Only') && error.message.includes('files are allowed')) {
-    return res.status(400).json({
-      success: false,
-      message: error.message
-    });
+  if (error.message.includes("Only") && error.message.includes("files are allowed")) {
+    return res.status(400).json({ success: false, message: error.message });
   }
 
   next(error);
 };
 
 /**
- * Cleanup temporary files middleware
+ * Cleanup temp files
  */
 const cleanupTempFiles = (req, res, next) => {
   const originalSend = res.send;
-  
-  res.send = function(data) {
-    // Cleanup temporary files if they exist
-    if (req.file && req.file.path) {
-      const fs = require('fs');
-      fs.unlink(req.file.path, (err) => {
-        if (err) logger.warn('Failed to cleanup temp file:', req.file.path);
-      });
-    }
-    
-    if (req.files && Array.isArray(req.files)) {
-      req.files.forEach(file => {
-        if (file.path) {
-          const fs = require('fs');
-          fs.unlink(file.path, (err) => {
-            if (err) logger.warn('Failed to cleanup temp file:', file.path);
-          });
-        }
-      });
-    }
-    
+
+  res.send = function (data) {
+    const remove = file => {
+      if (file?.path) {
+        fs.unlink(file.path, err => {
+          if (err) logger.warn("Failed to cleanup temp file:", file.path);
+        });
+      }
+    };
+
+    if (req.file) remove(req.file);
+    if (Array.isArray(req.files)) req.files.forEach(remove);
+
     originalSend.call(this, data);
   };
-  
+
   next();
 };
 
-/**
- * Create upload directory if it doesn't exist
- */
-const ensureUploadDir = () => {
-  const fs = require('fs');
-  const uploadDir = path.join(__dirname, '../temp/uploads/');
-  
-  if (!fs.existsSync(uploadDir)) {
-    fs.mkdirSync(uploadDir, { recursive: true });
-    logger.info('Upload directory created:', uploadDir);
-  }
-};
-
-// Initialize upload directory
-ensureUploadDir();
-
 module.exports = {
-  // Multer instances
-  profilePhotoUpload: profilePhotoUpload.single('profilePhoto'),
-  listingPhotosUpload: listingPhotosUpload.array('listingPhotos', 10),
-  documentUpload: documentUpload.array('documents', 5),
-  
-  // Custom multer instance creator
+  profilePhotoUpload: profilePhotoUpload.single("profilePhoto"),
+  listingPhotosUpload: listingPhotosUpload.array("listingPhotos", 10),
+  documentUpload: documentUpload.array("documents", 5),
+
   createMulterInstance,
-  
-  // Validation middleware
   validateUpload,
-  
-  // Error handling
   handleMulterError,
-  
-  // Cleanup
-  cleanupTempFiles,
-  
-  // Utility
-  ensureUploadDir
+  cleanupTempFiles
 };
