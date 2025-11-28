@@ -24,7 +24,7 @@ const allowedOrigins = [
   "http://127.0.0.1:3000",
 
   "https://smart-rental-marketplace-3f95.vercel.app",   // FRONTEND
-  "https://smart-rental-marketplace-9ue157.vercel.app"  // BACKEND (optional)
+  "https://smart-rental-marketplace.vercel.app"  // BACKEND (optional)
 ];
 
 app.use((req, res, next) => {
