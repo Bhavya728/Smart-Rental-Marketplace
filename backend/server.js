@@ -63,7 +63,10 @@ app.use(
     crossOriginOpenerPolicy: false
   })
 );
+// 404 favicon
+app.use(express.static("public"));
 
+app.get("/favicon.ico", (req, res) => res.status(204).end());
 /* ======================================================
    REQUEST LOGGING
 ====================================================== */
