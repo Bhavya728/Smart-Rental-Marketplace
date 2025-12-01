@@ -41,37 +41,33 @@ const MapContainer = ({
     console.log('Adding markers for', listings.length, 'listings');
   }, [listings]);
 
-  const MarkerPin = ({ listing, isSelected, isHovered, onClick }) => (
+  const MarkerPin = ({ listing, isSelected, isHovered, onClick }) => {
+  const coords = listing.location?.coordinates;
+
+  // SUPPORT BOTH FORMATS:
+  // { lat: xx, lng: yy }  OR  [lng, lat]
+  const lng = Array.isArray(coords) ? coords[0] : coords?.lng;
+  const lat = Array.isArray(coords) ? coords[1] : coords?.lat;
+
+  const safeLng = Number(lng) || 0;
+  const safeLat = Number(lat) || 0;
+
+  return (
     <motion.div
-      className={cn(
-        "absolute transform -translate-x-1/2 -translate-y-full cursor-pointer z-10",
-        "before:content-[''] before:absolute before:bottom-0 before:left-1/2 before:transform before:-translate-x-1/2",
-        "before:w-0 before:h-0 before:border-l-4 before:border-r-4 before:border-t-4",
-        "before:border-l-transparent before:border-r-transparent",
-        isSelected || isHovered ? "before:border-t-primary" : "before:border-t-gray-600"
-      )}
-      style={{ 
-        left: `${((listing.location.coordinates[0] + 74.0060) / 0.2) * 100}%`,
-        top: `${((40.7628 - listing.location.coordinates[1]) / 0.1) * 100}%`
+      className="absolute transform -translate-x-1/2 -translate-y-full cursor-pointer z-10"
+      style={{
+        left: `${((safeLng + 74.0060) / 0.2) * 100}%`,
+        top: `${((40.7128 - safeLat) / 0.1) * 100}%`
       }}
       onClick={() => onClick(listing)}
-      onMouseEnter={() => setHoveredListing(listing._id)}
-      onMouseLeave={() => setHoveredListing(null)}
-      whileHover={{ scale: 1.1 }}
-      whileTap={{ scale: 0.95 }}
     >
-      <div
-        className={cn(
-          "flex items-center justify-center min-w-16 px-2 py-1 rounded-full text-xs font-semibold shadow-lg border-2",
-          (isSelected || isHovered)
-            ? "bg-primary text-white border-primary-600"
-            : "bg-white text-gray-700 border-white"
-        )}
-      >
+      <div className="min-w-16 px-2 py-1 rounded-full bg-white shadow">
         ${listing.price}
       </div>
     </motion.div>
   );
+};
+
 
   return (
     <div ref={mapRef} className={cn("relative bg-gray-200 overflow-hidden", className)}>
