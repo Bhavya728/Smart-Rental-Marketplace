@@ -441,7 +441,7 @@ const CategoryPage = () => {
                   </motion.div>
                 );
               })}
-          </div>
+            </div>
 
             {/* Call to Action */}
             <motion.div
@@ -496,6 +496,7 @@ const CategoryPage = () => {
                 </div>
               </div>
             </motion.div>
+          </div>
         </div>
       </div>
     );
