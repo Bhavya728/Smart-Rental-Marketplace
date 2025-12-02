@@ -266,44 +266,44 @@ const Profile = () => {
         <div className="absolute -bottom-40 -left-40 w-80 h-80 rounded-full bg-gradient-to-tr from-pink-400/20 to-orange-600/20 blur-3xl"></div>
       </div>
       
-      <Container className="py-12">
-        <div className="space-y-12">
-        {/* Navigation */}
-        <div className="flex items-center justify-between">
+      <Container className="py-6 sm:py-8 lg:py-12">
+        <div className="space-y-6 sm:space-y-8 lg:space-y-12">
+        {/* Enhanced Mobile-Responsive Navigation */}
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <button
             onClick={() => navigate(-1)}
-            className="group flex items-center space-x-2 text-gray-600 hover:text-gray-800 px-4 py-2 rounded-xl hover:bg-white/80 backdrop-blur-sm border border-transparent hover:border-white/20 hover:shadow-lg transition-all duration-300"
+            className="group flex items-center space-x-2 text-gray-600 hover:text-gray-800 px-4 py-3 rounded-xl hover:bg-white/80 backdrop-blur-sm border border-transparent hover:border-white/20 hover:shadow-lg transition-all duration-300 min-h-[44px] touch-manipulation self-start"
           >
-            <ArrowLeft className="w-5 h-5 group-hover:-translate-x-1 transition-transform duration-300" />
-            <span className="font-semibold">Back</span>
+            <ArrowLeft className="w-4 h-4 sm:w-5 sm:h-5 group-hover:-translate-x-1 transition-transform duration-300" />
+            <span className="font-semibold text-sm sm:text-base">Back</span>
           </button>
 
-          {/* Action Buttons */}
-          <div className="flex items-center space-x-4">
+          {/* Enhanced Mobile Action Buttons */}
+          <div className="flex items-center gap-2 sm:gap-3 flex-wrap">
             <button
               onClick={handleShareProfile}
-              className="group flex items-center space-x-2 px-6 py-3 bg-white/80 backdrop-blur-sm border border-white/20 rounded-xl hover:bg-white hover:shadow-lg transition-all duration-300 hover:scale-105"
+              className="group flex items-center space-x-2 px-4 sm:px-6 py-2.5 sm:py-3 bg-white/80 backdrop-blur-sm border border-white/20 rounded-xl hover:bg-white hover:shadow-lg transition-all duration-300 hover:scale-105 min-h-[44px] touch-manipulation"
             >
               <Share className="w-4 h-4 group-hover:rotate-12 transition-transform duration-300" />
-              <span className="font-semibold text-gray-700">Share</span>
+              <span className="font-medium sm:font-semibold text-gray-700 text-sm sm:text-base">Share</span>
             </button>
 
             {!isOwnProfile && (
               <>
                 <button
                   onClick={handleContactUser}
-                  className="group flex items-center space-x-2 px-6 py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl hover:from-blue-700 hover:to-purple-700 transition-all duration-300 shadow-lg hover:shadow-blue-500/25 hover:scale-105"
+                  className="group flex items-center space-x-2 px-4 sm:px-6 py-2.5 sm:py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl hover:from-blue-700 hover:to-purple-700 transition-all duration-300 shadow-lg hover:shadow-blue-500/25 hover:scale-105 min-h-[44px] touch-manipulation"
                 >
                   <MessageCircle className="w-4 h-4 group-hover:rotate-12 transition-transform duration-300" />
-                  <span className="font-semibold">Contact</span>
+                  <span className="font-medium sm:font-semibold text-sm sm:text-base">Contact</span>
                 </button>
 
                 <button
                   onClick={handleReportUser}
-                  className="group flex items-center space-x-2 px-6 py-3 bg-red-50 border border-red-200 rounded-xl hover:bg-red-100 text-red-600 hover:text-red-700 transition-all duration-300 hover:scale-105"
+                  className="group flex items-center space-x-1 sm:space-x-2 px-3 sm:px-6 py-2.5 sm:py-3 bg-red-50 border border-red-200 rounded-xl hover:bg-red-100 text-red-600 hover:text-red-700 transition-all duration-300 hover:scale-105 min-h-[44px] touch-manipulation"
                 >
                   <Flag className="w-4 h-4 group-hover:rotate-12 transition-transform duration-300" />
-                  <span className="font-semibold">Report</span>
+                  <span className="hidden sm:inline font-semibold">Report</span>
                 </button>
               </>
             )}
@@ -311,10 +311,10 @@ const Profile = () => {
             {isOwnProfile && (
               <button
                 onClick={handleEditProfile}
-                className="group flex items-center space-x-2 px-6 py-3 bg-gradient-to-r from-green-600 to-emerald-600 text-white rounded-xl hover:from-green-700 hover:to-emerald-700 transition-all duration-300 shadow-lg hover:shadow-green-500/25 hover:scale-105"
+                className="group flex items-center space-x-2 px-4 sm:px-6 py-2.5 sm:py-3 bg-gradient-to-r from-green-600 to-emerald-600 text-white rounded-xl hover:from-green-700 hover:to-emerald-700 transition-all duration-300 shadow-lg hover:shadow-green-500/25 hover:scale-105 min-h-[44px] touch-manipulation"
               >
                 <Settings className="w-4 h-4 group-hover:rotate-12 transition-transform duration-300" />
-                <span className="font-semibold">Edit Profile</span>
+                <span className="font-medium sm:font-semibold text-sm sm:text-base">Edit Profile</span>
               </button>
             )}
           </div>

@@ -264,57 +264,84 @@ const SearchPage = () => {
   );
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 pt-16">\n      {/* Header Section */}\n      <div className="bg-white/80 backdrop-blur-md border-b border-gray-200/50 sticky top-16 z-40">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 pt-16">
+      {/* Enhanced Header Section with Mobile-First Design */}
+      <div className="bg-white/90 backdrop-blur-md border-b border-gray-200/50 sticky top-16 z-40 shadow-lg">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6">
           <div className="flex flex-col space-y-4">
-            {/* Search Bar */}
+            {/* Page Title - Mobile Optimized */}
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-2 sm:space-y-0">
+              <h1 className="text-2xl sm:text-3xl lg:text-4xl font-black text-gray-900">
+                {debouncedSearchQuery ? `Results for "${debouncedSearchQuery}"` : 'Discover Rentals'}
+              </h1>
+              {totalResults > 0 && (
+                <span className="text-sm sm:text-base text-gray-600 font-medium">
+                  {totalResults.toLocaleString()} result{totalResults !== 1 ? 's' : ''}
+                </span>
+              )}
+            </div>
+
+            {/* Enhanced Search Bar with Better Mobile UX */}
             <form onSubmit={handleSearchSubmit} className="flex-1">
               <div className="relative">
-                <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+                <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5 sm:w-6 sm:h-6 pointer-events-none" />
                 <input
                   id="searchQuery"
                   name="searchQuery"
                   type="text"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  placeholder="Search for rental items..."
-                  className="w-full pl-12 pr-4 py-4 text-lg border border-gray-200 rounded-2xl focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white/90 backdrop-blur-sm shadow-lg hover:shadow-xl transition-all duration-300"
+                  placeholder="Search for tools, equipment, or anything you need..."
+                  className="w-full pl-12 sm:pl-14 pr-4 py-4 sm:py-5 text-base sm:text-lg border-2 border-gray-200 rounded-2xl focus:ring-4 focus:ring-blue-500/20 focus:border-blue-500 bg-white/90 backdrop-blur-sm shadow-lg hover:shadow-xl transition-all duration-300 placeholder-gray-500"
+                  aria-label="Search rental items"
                 />
-                {suggestions.length > 0 && (
-                  <div className="absolute top-full left-0 right-0 mt-2 bg-white rounded-xl shadow-2xl border border-gray-100 max-h-96 overflow-y-auto z-50">
-                    {suggestions.map((suggestion, index) => (
-                      <button
-                        key={index}
-                        className="w-full px-6 py-3 text-left hover:bg-blue-50 hover:text-blue-700 transition-colors border-b border-gray-50 last:border-b-0 focus:bg-blue-50 focus:outline-none"
-                        onClick={() => {
-                          setSearchQuery(suggestion.title || suggestion);
-                          setSuggestions([]);
-                        }}
-                      >
-                        <div className="flex items-center space-x-3">
-                          <Search className="w-4 h-4 text-gray-400" />
-                          <span className="font-medium">{suggestion.title || suggestion}</span>
-                        </div>
-                      </button>
-                    ))}
-                  </div>
-                )}
+                
+                {/* Enhanced Suggestions with Mobile Optimization */}
+                <AnimatePresence>
+                  {suggestions.length > 0 && (
+                    <motion.div
+                      initial={{ opacity: 0, y: -10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -10 }}
+                      transition={{ duration: 0.2 }}
+                      className="absolute top-full left-0 right-0 mt-2 bg-white/95 backdrop-blur-md rounded-xl shadow-2xl border border-gray-200/50 max-h-64 overflow-y-auto z-50"
+                    >
+                      {suggestions.map((suggestion, index) => (
+                        <button
+                          key={index}
+                          className="w-full px-4 sm:px-6 py-3 sm:py-4 text-left hover:bg-blue-50/80 transition-colors border-b border-gray-100/50 last:border-b-0 focus:bg-blue-50 focus:outline-none first:rounded-t-xl last:rounded-b-xl"
+                          onClick={() => {
+                            setSearchQuery(suggestion.title || suggestion);
+                            setSuggestions([]);
+                          }}
+                        >
+                          <div className="flex items-center space-x-3">
+                            <Search className="w-4 h-4 text-gray-400 flex-shrink-0" />
+                            <span className="font-medium text-gray-700 text-base sm:text-lg">{suggestion.title || suggestion}</span>
+                          </div>
+                        </button>
+                      ))}
+                    </motion.div>
+                  )}
+                </AnimatePresence>
               </div>
             </form>
 
-            {/* Filter Toggle and Active Filters */}
-            <div className="flex flex-wrap items-center gap-4">
+            {/* Filter Toggle and Active Filters - Mobile Responsive */}
+            <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4">
               <Button
                 variant="outline"
                 size="sm"
                 onClick={() => setShowFilters(!showFilters)}
                 className={cn(
-                  "flex items-center space-x-2 transition-all duration-200",
+                  "flex items-center justify-center space-x-2 transition-all duration-200 min-h-[44px] w-full sm:w-auto",
                   showFilters && "bg-blue-50 border-blue-200 text-blue-700"
                 )}
+                aria-expanded={showFilters}
+                aria-label="Toggle search filters"
               >
-                <Filter className="w-4 h-4" />
-                <span>Filters</span>
+                <Filter className="w-4 h-4 sm:w-5 sm:h-5" />
+                <span className="font-medium">{showFilters ? 'Hide Filters' : 'Show Filters'}</span>
               </Button>
 
               {/* Active Filters Display */}
@@ -385,9 +412,29 @@ const SearchPage = () => {
         </div>
       </div>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="flex flex-col lg:flex-row gap-8">
-          {/* Filter Panel */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
+        <div className="flex flex-col lg:flex-row gap-6 lg:gap-8">
+          {/* Mobile Filter Panel - Collapsible */}
+          <AnimatePresence>
+            {showFilters && (
+              <motion.div
+                initial={{ opacity: 0, height: 0 }}
+                animate={{ opacity: 1, height: "auto" }}
+                exit={{ opacity: 0, height: 0 }}
+                transition={{ duration: 0.3 }}
+                className="lg:hidden overflow-hidden"
+              >
+                <FilterPanel
+                  filters={filters}
+                  onChange={handleFiltersChange}
+                  onClear={handleClearFilters}
+                  className="mb-6"
+                />
+              </motion.div>
+            )}
+          </AnimatePresence>
+
+          {/* Desktop Filter Panel - Sidebar */}
           <AnimatePresence>
             {showFilters && (
               <motion.div
@@ -395,7 +442,7 @@ const SearchPage = () => {
                 animate={{ opacity: 1, x: 0 }}
                 exit={{ opacity: 0, x: -300 }}
                 transition={{ duration: 0.3 }}
-                className="lg:w-80 flex-shrink-0"
+                className="hidden lg:block lg:w-80 flex-shrink-0"
               >
                 <FilterPanel
                   filters={filters}
@@ -407,8 +454,8 @@ const SearchPage = () => {
             )}
           </AnimatePresence>
 
-          {/* Main Content */}
-          <div className="flex-1">
+          {/* Main Content with Enhanced Mobile Layout */}
+          <div className="flex-1 min-w-0">
             {/* Error State */}
             {error && (
               <motion.div
@@ -424,33 +471,38 @@ const SearchPage = () => {
               </motion.div>
             )}
 
-            {/* Results Grid or Loading Skeleton */}
+            {/* Enhanced Results Grid with Mobile-First Layout */}
             {listings.length > 0 ? (
               <>
                 <motion.div
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
-                  className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+                  className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6"
                 >
                   {listingsGrid}
                 </motion.div>
-                {/* Loading spinner overlay for fetches */}
+                
+                {/* Enhanced Loading Indicator */}
                 {loading && (
-                  <div className="flex justify-center items-center mt-6">
-                    <div className="inline-flex items-center space-x-2 text-gray-600">
+                  <div className="flex justify-center items-center mt-6 sm:mt-8">
+                    <div className="inline-flex items-center space-x-3 px-6 py-3 bg-white/90 backdrop-blur-sm rounded-xl shadow-lg border border-gray-200/50">
                       <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-blue-600"></div>
-                      <span>Loading...</span>
+                      <span className="text-gray-700 font-medium">Loading more results...</span>
                     </div>
                   </div>
                 )}
               </>
             ) : loading ? (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {[...Array(6)].map((_, i) => (
-                  <div key={i} className="bg-white rounded-2xl p-6 animate-pulse">
-                    <div className="aspect-video bg-gray-200 rounded-xl mb-4"></div>
-                    <div className="h-4 bg-gray-200 rounded mb-2"></div>
-                    <div className="h-4 bg-gray-200 rounded w-2/3"></div>
+              /* Enhanced Loading Skeletons with Mobile Responsive Grid */
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6">
+                {[...Array(8)].map((_, i) => (
+                  <div key={i} className="bg-white/80 backdrop-blur-sm rounded-2xl p-4 sm:p-6 animate-pulse shadow-lg border border-gray-200/50">
+                    <div className="aspect-[4/3] bg-gradient-to-br from-gray-200 to-gray-300 rounded-xl mb-4"></div>
+                    <div className="space-y-2">
+                      <div className="h-4 bg-gradient-to-r from-gray-200 to-gray-300 rounded"></div>
+                      <div className="h-4 bg-gradient-to-r from-gray-200 to-gray-300 rounded w-2/3"></div>
+                      <div className="h-3 bg-gradient-to-r from-gray-200 to-gray-300 rounded w-1/2 mt-3"></div>
+                    </div>
                   </div>
                 ))}
               </div>

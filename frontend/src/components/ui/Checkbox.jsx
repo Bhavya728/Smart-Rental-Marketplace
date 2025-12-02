@@ -15,7 +15,7 @@ const Checkbox = ({
 }) => {
   const sizes = {
     sm: "w-4 h-4",
-    md: "w-5 h-5",
+    md: "w-5 h-5", 
     lg: "w-6 h-6"
   };
 
@@ -39,7 +39,7 @@ const Checkbox = ({
         <label
           htmlFor={id}
           className={cn(
-            "relative cursor-pointer",
+            "relative cursor-pointer touch-manipulation min-w-[44px] min-h-[44px] flex items-center justify-center",
             disabled && "cursor-not-allowed opacity-50"
           )}
         >
@@ -77,12 +77,12 @@ const Checkbox = ({
       </div>
       
       {(label || description) && (
-        <div className="flex-1 min-w-0">
+        <div className="flex-1 min-w-0 py-2">
           {label && (
             <label
               htmlFor={id}
               className={cn(
-                "block text-sm font-medium text-gray-900 cursor-pointer",
+                "block text-sm sm:text-base font-medium text-gray-900 cursor-pointer leading-relaxed touch-manipulation",
                 disabled && "cursor-not-allowed opacity-50"
               )}
             >
@@ -91,7 +91,7 @@ const Checkbox = ({
           )}
           {description && (
             <p className={cn(
-              "text-sm text-gray-500 mt-0.5",
+              "text-sm text-gray-500 mt-0.5 leading-relaxed",
               disabled && "opacity-50"
             )}>
               {description}

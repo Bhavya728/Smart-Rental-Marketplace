@@ -7,7 +7,7 @@ import Card from '../components/ui/Card';
 
 const Register = () => {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50/80 via-white to-indigo-50/80 flex flex-col justify-center py-16 sm:px-6 lg:px-8 relative overflow-hidden">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50/80 via-white to-indigo-50/80 flex flex-col justify-center py-12 sm:py-16 px-4 sm:px-6 lg:px-8 relative overflow-hidden">
       {/* Background decoration */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <div className="absolute -top-40 -left-40 w-96 h-96 bg-gradient-to-br from-purple-400/20 to-blue-500/15 rounded-full blur-3xl animate-pulse"></div>
@@ -19,21 +19,21 @@ const Register = () => {
           {/* Back to Home */}
           <Link 
             to="/" 
-            className="inline-flex items-center text-sm font-semibold text-gray-600 hover:text-blue-700 mb-8 transition-all duration-300 group"
+            className="inline-flex items-center text-sm sm:text-base font-semibold text-gray-600 hover:text-blue-700 mb-6 sm:mb-8 transition-all duration-300 group min-h-[44px] touch-manipulation"
           >
-            <ArrowLeft size={18} className="mr-2 group-hover:-translate-x-1 transition-transform" />
+            <ArrowLeft size={18} className="mr-2 group-hover:-translate-x-1 transition-transform flex-shrink-0" />
             Back to Home
           </Link>
 
           {/* Header */}
-          <div className="text-center mb-10">
-            <div className="flex items-center justify-center space-x-3 mb-8">
-              <div className="w-14 h-14 bg-gradient-to-br from-blue-600 via-purple-600 to-indigo-700 rounded-2xl flex items-center justify-center shadow-xl shadow-blue-500/30">
-                <span className="text-white font-black text-xl">SR</span>
+          <div className="text-center mb-8 sm:mb-10">
+            <div className="flex items-center justify-center space-x-3 mb-6 sm:mb-8">
+              <div className="w-12 h-12 sm:w-14 sm:h-14 bg-gradient-to-br from-blue-600 via-purple-600 to-indigo-700 rounded-xl sm:rounded-2xl flex items-center justify-center shadow-xl shadow-blue-500/30">
+                <span className="text-white font-black text-lg sm:text-xl">SR</span>
               </div>
               <div className="flex flex-col items-start">
-                <h1 className="text-3xl font-black text-gray-900 tracking-tight leading-none">Smart Rental</h1>
-                <span className="text-sm font-medium text-gray-600">Join the community</span>
+                <h1 className="text-2xl sm:text-3xl font-black text-gray-900 tracking-tight leading-none">Smart Rental</h1>
+                <span className="text-xs sm:text-sm font-medium text-gray-600">Join the community</span>
               </div>
             </div>
             

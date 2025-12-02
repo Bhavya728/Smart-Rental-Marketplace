@@ -154,25 +154,25 @@ const ListingCard = ({ listing, onFavorite, onShare, showOwnerActions = false, o
               <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
             </div>
             
-            {/* Enhanced Overlay Actions */}
-            <div className="absolute top-3 right-3 flex space-x-2">
+            {/* Enhanced Overlay Actions with Better Touch Targets */}
+            <div className="absolute top-3 right-3 flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-2">
               <button
                 onClick={handleFavoriteClick}
-                className={`p-2.5 rounded-xl backdrop-blur-md border border-white/20 shadow-lg transition-all duration-300 hover:scale-110 ${
+                className={`p-3 sm:p-2.5 rounded-xl backdrop-blur-md border border-white/20 shadow-lg transition-all duration-300 hover:scale-110 min-w-[44px] min-h-[44px] sm:min-w-auto sm:min-h-auto flex items-center justify-center ${
                   isFavorited 
                     ? 'bg-gradient-to-r from-red-500 to-pink-500 text-white shadow-red-500/25' 
                     : 'bg-white/90 hover:bg-white text-gray-600 hover:text-red-500 shadow-black/10'
                 }`}
               >
-                <Heart className={`w-4 h-4 ${isFavorited ? 'fill-current' : ''}`} />
+                <Heart className={`w-5 h-5 sm:w-4 sm:h-4 ${isFavorited ? 'fill-current' : ''}`} />
               </button>
               
               <div className="relative">
                 <button
                   onClick={handleShareClick}
-                  className="p-2.5 rounded-xl bg-white/90 backdrop-blur-md border border-white/20 hover:bg-white text-gray-600 hover:text-blue-500 transition-all duration-300 hover:scale-110 shadow-lg shadow-black/10"
+                  className="p-3 sm:p-2.5 rounded-xl bg-white/90 backdrop-blur-md border border-white/20 hover:bg-white text-gray-600 hover:text-blue-500 transition-all duration-300 hover:scale-110 shadow-lg shadow-black/10 min-w-[44px] min-h-[44px] sm:min-w-auto sm:min-h-auto flex items-center justify-center"
                 >
-                  <Share2 className="w-4 h-4" />
+                  <Share2 className="w-5 h-5 sm:w-4 sm:h-4" />
                 </button>
                 
                 {/* Enhanced Share Menu */}

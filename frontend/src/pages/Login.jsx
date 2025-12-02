@@ -7,7 +7,7 @@ import Card from '../components/ui/Card';
 
 const Login = () => {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50/80 via-white to-indigo-50/80 flex flex-col justify-center py-16 sm:px-6 lg:px-8 relative overflow-hidden">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50/80 via-white to-indigo-50/80 flex flex-col justify-center py-12 sm:py-16 px-4 sm:px-6 lg:px-8 relative overflow-hidden">
       {/* Background decoration */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <div className="absolute -top-40 -right-40 w-80 h-80 bg-gradient-to-br from-blue-400/20 to-purple-500/15 rounded-full blur-3xl animate-pulse"></div>
@@ -16,38 +16,38 @@ const Login = () => {
       
       <FormContainer className="relative z-10">
         <div className="sm:mx-auto sm:w-full sm:max-w-lg">
-          {/* Back to Home */}
+          {/* Back to Home - Enhanced Mobile */}
           <Link 
             to="/" 
-            className="inline-flex items-center text-sm font-semibold text-gray-600 hover:text-blue-700 mb-8 transition-all duration-300 group"
+            className="inline-flex items-center text-sm sm:text-base font-semibold text-gray-600 hover:text-blue-700 mb-6 sm:mb-8 transition-all duration-300 group min-h-[44px] touch-manipulation"
           >
-            <ArrowLeft size={18} className="mr-2 group-hover:-translate-x-1 transition-transform" />
+            <ArrowLeft size={18} className="mr-2 group-hover:-translate-x-1 transition-transform flex-shrink-0" />
             Back to Home
           </Link>
 
-          {/* Header */}
-          <div className="text-center mb-10">
-            <div className="flex items-center justify-center space-x-3 mb-8">
-              <div className="w-14 h-14 bg-gradient-to-br from-blue-600 via-blue-700 to-indigo-700 rounded-2xl flex items-center justify-center shadow-xl shadow-blue-500/30">
-                <span className="text-white font-black text-xl">SR</span>
+          {/* Enhanced Mobile-Responsive Header */}
+          <div className="text-center mb-8 sm:mb-10">
+            <div className="flex items-center justify-center space-x-3 mb-6 sm:mb-8">
+              <div className="w-12 h-12 sm:w-14 sm:h-14 bg-gradient-to-br from-blue-600 via-blue-700 to-indigo-700 rounded-xl sm:rounded-2xl flex items-center justify-center shadow-xl shadow-blue-500/30">
+                <span className="text-white font-black text-lg sm:text-xl">SR</span>
               </div>
               <div className="flex flex-col items-start">
-                <h1 className="text-3xl font-black text-gray-900 tracking-tight leading-none">Smart Rental</h1>
-                <span className="text-sm font-medium text-gray-600">Welcome back</span>
+                <h1 className="text-2xl sm:text-3xl font-black text-gray-900 tracking-tight leading-none">Smart Rental</h1>
+                <span className="text-xs sm:text-sm font-medium text-gray-600">Welcome back</span>
               </div>
             </div>
             
-            <h2 className="text-4xl md:text-5xl font-black text-gray-900 mb-4 tracking-tight">
+            <h2 className="text-3xl sm:text-4xl md:text-5xl font-black text-gray-900 mb-3 sm:mb-4 tracking-tight">
               Sign In
             </h2>
-            <p className="text-xl text-gray-700/90 font-medium leading-relaxed max-w-md mx-auto">
+            <p className="text-lg sm:text-xl text-gray-700/90 font-medium leading-relaxed max-w-md mx-auto px-2">
               Continue your journey of sharing and discovering amazing rentals
             </p>
           </div>
         </div>
 
-        <div className="mt-12 sm:mx-auto sm:w-full sm:max-w-lg">
-          <Card variant="elevated" className="py-12 px-8 shadow-2xl shadow-gray-300/25 sm:px-12 backdrop-blur-sm border border-white/60">
+        <div className="mt-8 sm:mt-12 sm:mx-auto sm:w-full sm:max-w-lg">
+          <Card variant="elevated" className="py-8 sm:py-12 px-6 sm:px-8 lg:px-12 shadow-2xl shadow-gray-300/25 backdrop-blur-sm border border-white/60">
             <LoginForm />
             
             {/* Register Link */}
@@ -61,10 +61,10 @@ const Login = () => {
                 </div>
               </div>
 
-              <div className="mt-8 text-center">
+              <div className="mt-6 sm:mt-8 text-center">
                 <Link
                   to="/register"
-                  className="inline-flex items-center px-6 py-3 rounded-xl font-semibold text-blue-700 bg-gradient-to-r from-blue-50 to-indigo-50 hover:from-blue-100 hover:to-indigo-100 transition-all duration-300 shadow-md hover:shadow-lg border border-blue-200/60"
+                  className="inline-flex items-center px-6 py-3 sm:py-4 rounded-xl font-semibold text-blue-700 bg-gradient-to-r from-blue-50 to-indigo-50 hover:from-blue-100 hover:to-indigo-100 transition-all duration-300 shadow-md hover:shadow-lg border border-blue-200/60 min-h-[44px] w-full sm:w-auto justify-center"
                 >
                   Create a new account
                 </Link>
@@ -72,19 +72,19 @@ const Login = () => {
             </div>
           </Card>
 
-          {/* Help Links */}
-          <div className="mt-8 text-center">
-            <div className="flex items-center justify-center space-x-4 text-sm text-gray-500">
+          {/* Enhanced Mobile-Responsive Help Links */}
+          <div className="mt-6 sm:mt-8 text-center">
+            <div className="flex flex-col sm:flex-row items-center justify-center space-y-3 sm:space-y-0 sm:space-x-4 text-sm text-gray-500">
               <Link 
                 to="/help" 
-                className="hover:text-primary transition-colors duration-200"
+                className="hover:text-primary transition-colors duration-200 min-h-[44px] flex items-center touch-manipulation"
               >
                 Need Help?
               </Link>
-              <span>•</span>
+              <span className="hidden sm:inline">•</span>
               <Link 
                 to="/contact" 
-                className="hover:text-primary transition-colors duration-200"
+                className="hover:text-primary transition-colors duration-200 min-h-[44px] flex items-center touch-manipulation"
               >
                 Contact Support
               </Link>

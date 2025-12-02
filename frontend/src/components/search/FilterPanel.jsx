@@ -117,10 +117,12 @@ const FilterPanel = ({
     <div className="border-b border-gray-200 last:border-b-0">
       <button
         onClick={onToggle}
-        className="w-full flex items-center justify-between py-4 px-6 text-left hover:bg-gray-50 transition-colors duration-200"
+        className="w-full flex items-center justify-between py-3 sm:py-4 px-4 sm:px-6 text-left hover:bg-gray-50 transition-colors duration-200 min-h-[44px] touch-manipulation"
+        aria-expanded={isExpanded}
+        aria-label={`${isExpanded ? 'Collapse' : 'Expand'} ${title} filter section`}
       >
         <div className="flex items-center">
-          <span className="font-medium text-gray-900">{title}</span>
+          <span className="font-medium text-gray-900 text-sm sm:text-base">{title}</span>
           {count && count > 0 && (
             <span className="ml-2 px-2 py-1 bg-primary text-white text-xs rounded-full">
               {count}
@@ -128,9 +130,9 @@ const FilterPanel = ({
           )}
         </div>
         {isExpanded ? (
-          <ChevronUp className="w-4 h-4 text-gray-500" />
+          <ChevronUp className="w-4 h-4 sm:w-5 sm:h-5 text-gray-500 flex-shrink-0" />
         ) : (
-          <ChevronDown className="w-4 h-4 text-gray-500" />
+          <ChevronDown className="w-4 h-4 sm:w-5 sm:h-5 text-gray-500 flex-shrink-0" />
         )}
       </button>
       
@@ -143,7 +145,7 @@ const FilterPanel = ({
             transition={{ duration: 0.2 }}
             className="overflow-hidden"
           >
-            <div className="px-6 pb-4">
+            <div className="px-4 sm:px-6 pb-3 sm:pb-4">
               {children}
             </div>
           </motion.div>
@@ -182,14 +184,14 @@ const FilterPanel = ({
       initial={{ opacity: 0, x: -20 }}
       animate={{ opacity: 1, x: 0 }}
       className={cn(
-        "bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden",
+        "bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden",
         className
       )}
     >
-      {/* Header */}
-      <div className="flex items-center justify-between p-6 border-b border-gray-200">
-        <h3 className="text-lg font-semibold text-gray-900 flex items-center">
-          <Filter className="w-5 h-5 mr-2" />
+      {/* Enhanced Mobile-Responsive Header */}
+      <div className="flex items-center justify-between p-4 sm:p-6 border-b border-gray-200 bg-gray-50/50">
+        <h3 className="text-base sm:text-lg font-semibold text-gray-900 flex items-center">
+          <Filter className="w-4 h-4 sm:w-5 sm:h-5 mr-2" />
           Filters
         </h3>
         
@@ -198,10 +200,11 @@ const FilterPanel = ({
             onClick={onClear}
             variant="ghost"
             size="sm"
-            className="text-gray-500 hover:text-gray-700"
+            className="text-gray-500 hover:text-gray-700 min-h-[40px] px-3 sm:px-4"
           >
-            <RotateCcw className="w-4 h-4 mr-1" />
-            Clear
+            <RotateCcw className="w-4 h-4 mr-1 sm:mr-2" />
+            <span className="hidden sm:inline">Clear</span>
+            <span className="sm:hidden">Clear</span>
           </Button>
         )}
       </div>
@@ -267,14 +270,14 @@ const FilterPanel = ({
         </div>
       </FilterSection>
 
-      {/* Features Filter */}
+      {/* Enhanced Features Filter with Mobile-Responsive Grid */}
       <FilterSection
         title="Features"
         isExpanded={expandedSections.features}
         onToggle={() => toggleSection('features')}
         count={filters.features?.length || 0}
       >
-        <div className="grid grid-cols-1 gap-3">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
           {commonFeatures.map((feature) => (
             <Checkbox
               key={feature.value}
@@ -282,18 +285,20 @@ const FilterPanel = ({
               checked={filters.features?.includes(feature.value) || false}
               onChange={() => handleFeatureToggle(feature.value)}
               label={feature.label}
+              className="min-h-[44px] touch-manipulation"
             />
           ))}
         </div>
       </FilterSection>
 
-      {/* Mobile Apply Button */}
-      <div className="lg:hidden p-6 border-t border-gray-200">
+      {/* Enhanced Mobile Apply Button */}
+      <div className="lg:hidden p-4 sm:p-6 border-t border-gray-200">
         <Button
           onClick={onToggle}
-          className="w-full"
+          className="w-full min-h-[48px] text-base font-medium"
+          size="lg"
         >
-          Apply Filters
+          Apply Filters {hasActiveFilters() && `(${Object.values(filters).filter(v => v && (Array.isArray(v) ? v.length > 0 : true)).length})`}
         </Button>
       </div>
     </motion.div>

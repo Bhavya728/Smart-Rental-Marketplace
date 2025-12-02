@@ -92,46 +92,46 @@ const Home = () => {
             </div>
           </div>
           
-          <h1 className="text-5xl md:text-7xl lg:text-8xl font-black text-gray-900 mb-8 tracking-tight">
-            Rent Anything,
+          <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-black text-gray-900 mb-6 sm:mb-8 tracking-tight leading-tight">
+            <span className="block">Rent Anything,</span>
             <span className="block bg-gradient-to-r from-blue-600 via-purple-600 to-indigo-700 bg-clip-text text-transparent drop-shadow-sm">
               Share Everything
             </span>
           </h1>
           
-          <p className="text-xl md:text-2xl lg:text-3xl text-gray-700/90 mb-12 max-w-4xl mx-auto leading-relaxed font-medium">
-            The smart marketplace where neighbors share tools, tech, and treasures. 
-            <span className="block mt-2 text-gray-600/80">Why buy when you can borrow?</span>
+          <p className="text-lg sm:text-xl md:text-2xl lg:text-3xl text-gray-700/90 mb-8 sm:mb-12 max-w-4xl mx-auto leading-relaxed font-medium px-4 sm:px-0">
+            <span className="block">The smart marketplace where neighbors share tools, tech, and treasures.</span>
+            <span className="block mt-1 sm:mt-2 text-gray-600/80 text-base sm:text-lg md:text-xl lg:text-2xl">Why buy when you can borrow?</span>
           </p>
           
           {/* CTA Buttons */}
-          <div className="flex flex-col sm:flex-row gap-6 justify-center items-center mb-16">
-            <Link to="/register">
-              <Button variant="primary" size="xl" className="text-lg px-10 py-5 shadow-2xl shadow-blue-500/30 hover:shadow-3xl hover:shadow-blue-500/40">
+          <div className="flex flex-col sm:flex-row gap-4 sm:gap-6 justify-center items-center mb-12 sm:mb-16 px-4 sm:px-0">
+            <Link to="/register" className="w-full sm:w-auto">
+              <Button variant="primary" size="xl" className="w-full sm:w-auto text-base sm:text-lg px-8 sm:px-10 py-4 sm:py-5 shadow-2xl shadow-blue-500/30 hover:shadow-3xl hover:shadow-blue-500/40">
                 Get Started Free
-                <ArrowRight className="ml-3" size={24} />
+                <ArrowRight className="ml-2 sm:ml-3" size={20} />
               </Button>
             </Link>
-            <Link to="/listings">
-              <Button variant="light-outline" size="xl" className="text-lg px-10 py-5 backdrop-blur-sm border-2">
+            <Link to="/listings" className="w-full sm:w-auto">
+              <Button variant="light-outline" size="xl" className="w-full sm:w-auto text-base sm:text-lg px-8 sm:px-10 py-4 sm:py-5 backdrop-blur-sm border-2">
                 Browse Items
               </Button>
             </Link>
           </div>
 
           {/* Stats */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-12 max-w-6xl mx-auto">
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8 md:gap-12 max-w-6xl mx-auto px-4 sm:px-0">
             {stats.map((stat, index) => {
               const Icon = stat.icon;
               return (
                 <div key={index} className="text-center group">
-                  <div className="relative mb-4">
-                    <div className="w-16 h-16 mx-auto rounded-2xl bg-gradient-to-br from-blue-100 to-indigo-100 flex items-center justify-center shadow-lg group-hover:shadow-xl transition-all duration-300 group-hover:scale-110">
-                      <Icon className="w-8 h-8 text-blue-600" />
+                  <div className="relative mb-3 sm:mb-4">
+                    <div className="w-12 h-12 sm:w-14 sm:h-14 md:w-16 md:h-16 mx-auto rounded-xl sm:rounded-2xl bg-gradient-to-br from-blue-100 to-indigo-100 flex items-center justify-center shadow-lg group-hover:shadow-xl transition-all duration-300 group-hover:scale-110">
+                      <Icon className="w-6 h-6 sm:w-7 sm:h-7 md:w-8 md:h-8 text-blue-600" />
                     </div>
                   </div>
-                  <div className="text-3xl md:text-4xl lg:text-5xl font-black text-gray-900 mb-2 tracking-tight">{stat.value}</div>
-                  <div className="text-base md:text-lg text-gray-700 font-semibold tracking-wide">{stat.label}</div>
+                  <div className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-black text-gray-900 mb-1 sm:mb-2 tracking-tight">{stat.value}</div>
+                  <div className="text-sm sm:text-base md:text-lg text-gray-700 font-semibold tracking-wide">{stat.label}</div>
                 </div>
               );
             })}
@@ -152,33 +152,33 @@ const Home = () => {
 
       {/* Features Section */}
       <SectionContainer className="bg-gradient-to-b from-white to-gray-50/50">
-        <div className="text-center mb-20">
-          <div className="inline-flex items-center px-4 py-2 rounded-full bg-blue-100/80 text-blue-800 text-sm font-semibold mb-6">
+        <div className="text-center mb-16 sm:mb-20">
+          <div className="inline-flex items-center px-4 py-2 rounded-full bg-blue-100/80 text-blue-800 text-sm font-semibold mb-4 sm:mb-6">
             <CheckCircle className="w-4 h-4 mr-2" />
             Trusted by thousands
           </div>
-          <h2 className="text-4xl md:text-5xl lg:text-6xl font-black text-gray-900 mb-6 tracking-tight">
+          <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black text-gray-900 mb-4 sm:mb-6 tracking-tight px-4 sm:px-0">
             Why Choose Smart Rental?
           </h2>
-          <p className="text-xl md:text-2xl text-gray-700/90 max-w-3xl mx-auto leading-relaxed font-medium">
+          <p className="text-lg sm:text-xl md:text-2xl text-gray-700/90 max-w-3xl mx-auto leading-relaxed font-medium px-4 sm:px-0">
             Built for the sharing economy with features that make renting safe, simple, and social.
           </p>
         </div>
 
-        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-10">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8 lg:gap-10">
           {features.map((feature, index) => {
             const Icon = feature.icon;
             return (
-              <Card key={index} variant="elevated" className="text-center p-10 group hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-3 hover:scale-105 relative overflow-hidden">
+              <Card key={index} variant="elevated" className="text-center p-6 sm:p-8 lg:p-10 group hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-3 hover:scale-105 relative overflow-hidden">
                 <div className="absolute inset-0 bg-gradient-to-br from-blue-50/50 via-transparent to-purple-50/30 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
                 <div className="relative z-10">
-                  <div className="w-20 h-20 bg-gradient-to-br from-blue-500 via-blue-600 to-indigo-600 rounded-3xl flex items-center justify-center mx-auto mb-8 shadow-xl shadow-blue-500/30 group-hover:shadow-2xl group-hover:shadow-blue-500/40 transition-all duration-500 group-hover:scale-110">
-                    <Icon className="w-10 h-10 text-white" />
+                  <div className="w-16 h-16 sm:w-18 sm:h-18 lg:w-20 lg:h-20 bg-gradient-to-br from-blue-500 via-blue-600 to-indigo-600 rounded-2xl sm:rounded-3xl flex items-center justify-center mx-auto mb-6 sm:mb-8 shadow-xl shadow-blue-500/30 group-hover:shadow-2xl group-hover:shadow-blue-500/40 transition-all duration-500 group-hover:scale-110">
+                    <Icon className="w-8 h-8 sm:w-9 sm:h-9 lg:w-10 lg:h-10 text-white" />
                   </div>
-                  <h3 className="text-2xl font-bold text-gray-900 mb-4 tracking-tight">
+                  <h3 className="text-xl sm:text-2xl font-bold text-gray-900 mb-3 sm:mb-4 tracking-tight">
                     {feature.title}
                   </h3>
-                  <p className="text-gray-700/90 leading-relaxed font-medium text-lg">
+                  <p className="text-gray-700/90 leading-relaxed font-medium text-base sm:text-lg">
                     {feature.description}
                   </p>
                 </div>
@@ -199,13 +199,13 @@ const Home = () => {
           </p>
         </div>
 
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-8">
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4 sm:gap-6 lg:gap-8">
           {categories.map((category, index) => (
             <Link key={index} to={`/category/${category.name.toLowerCase().replace(/\s/g, '-')}`}>
-              <Card variant="glass" className="text-center p-8 group hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2 hover:scale-105 cursor-pointer backdrop-blur-md border border-white/40">
-                <div className="text-5xl mb-5 group-hover:scale-125 transition-transform duration-300">{category.icon}</div>
-                <h3 className="font-bold text-gray-900 mb-2 text-lg tracking-tight">{category.name}</h3>
-                <div className="inline-flex items-center px-3 py-1 rounded-full bg-blue-100/80 text-blue-800 text-sm font-semibold">
+              <Card variant="glass" className="text-center p-4 sm:p-6 lg:p-8 group hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2 hover:scale-105 cursor-pointer backdrop-blur-md border border-white/40">
+                <div className="text-3xl sm:text-4xl lg:text-5xl mb-3 sm:mb-4 lg:mb-5 group-hover:scale-125 transition-transform duration-300">{category.icon}</div>
+                <h3 className="font-bold text-gray-900 mb-2 text-sm sm:text-base lg:text-lg tracking-tight line-clamp-2">{category.name}</h3>
+                <div className="inline-flex items-center px-2 sm:px-3 py-1 rounded-full bg-blue-100/80 text-blue-800 text-xs sm:text-sm font-semibold">
                   {category.count} items
                 </div>
               </Card>

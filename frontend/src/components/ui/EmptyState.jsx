@@ -15,22 +15,22 @@ const EmptyState = ({
 }) => {
   const sizes = {
     sm: {
-      container: "py-12",
-      icon: "w-16 h-16 mb-6",
-      title: "text-xl font-bold",
-      description: "text-base font-medium"
+      container: "py-8 sm:py-12 px-4",
+      icon: "w-12 h-12 sm:w-16 sm:h-16 mb-4 sm:mb-6",
+      title: "text-lg sm:text-xl font-bold",
+      description: "text-sm sm:text-base font-medium"
     },
     md: {
-      container: "py-16",
-      icon: "w-20 h-20 mb-8",
-      title: "text-2xl font-bold",
-      description: "text-lg font-medium"
+      container: "py-12 sm:py-16 px-4",
+      icon: "w-16 h-16 sm:w-20 sm:h-20 mb-6 sm:mb-8",
+      title: "text-xl sm:text-2xl font-bold",
+      description: "text-base sm:text-lg font-medium"
     },
     lg: {
-      container: "py-20",
-      icon: "w-24 h-24 mb-10",
-      title: "text-3xl font-bold",
-      description: "text-xl font-medium"
+      container: "py-16 sm:py-20 px-4",
+      icon: "w-20 h-20 sm:w-24 sm:h-24 mb-8 sm:mb-10",
+      title: "text-2xl sm:text-3xl font-bold",
+      description: "text-lg sm:text-xl font-medium"
     }
   };
 
@@ -48,29 +48,25 @@ const EmptyState = ({
         className
       )}
     >
-      <div className="relative mb-8">
-        <div className="w-24 h-24 mx-auto bg-gradient-to-br from-gray-100 to-gray-200 rounded-3xl flex items-center justify-center shadow-xl shadow-gray-200/40 mb-6">
-          <Icon className="w-12 h-12 text-gray-600" />
-        </div>
-        <motion.div
-          initial={{ scale: 0.8, opacity: 0 }}
-          animate={{ scale: 1, opacity: 1 }}
-          transition={{ delay: 0.1, duration: 0.3 }}
-          className={cn(
-            "flex items-center justify-center text-gray-400 mx-auto",
-            currentSize.icon
-          )}
-        >
-          <Icon className="w-full h-full" />
-        </motion.div>
-      </div>
+      {/* Enhanced Icon with Mobile Responsive Sizing */}
+      <motion.div
+        initial={{ scale: 0.8, opacity: 0 }}
+        animate={{ scale: 1, opacity: 1 }}
+        transition={{ delay: 0.1, duration: 0.3 }}
+        className={cn(
+          "flex items-center justify-center text-gray-400 mx-auto mb-6 sm:mb-8",
+          currentSize.icon
+        )}
+      >
+        <Icon className="w-full h-full" />
+      </motion.div>
 
       <motion.h3
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.2, duration: 0.3 }}
         className={cn(
-          "font-semibold text-gray-900 mb-2",
+          "font-semibold text-gray-900 mb-2 sm:mb-3 text-center",
           currentSize.title
         )}
       >
@@ -82,7 +78,7 @@ const EmptyState = ({
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.3, duration: 0.3 }}
         className={cn(
-          "text-gray-600 max-w-sm mx-auto mb-6",
+          "text-gray-600 max-w-sm mx-auto mb-6 sm:mb-8 text-center leading-relaxed",
           currentSize.description
         )}
       >
@@ -94,11 +90,13 @@ const EmptyState = ({
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.4, duration: 0.3 }}
+          className="w-full max-w-xs mx-auto"
         >
           <Button
             onClick={typeof action === 'function' ? action : (typeof action === 'object' && action?.onClick ? action.onClick : undefined)}
             variant="outline"
-            size={size}
+            size="lg"
+            className="w-full sm:w-auto hover:bg-blue-50 hover:border-blue-300 transition-all duration-200 min-h-[44px]"
           >
             {actionLabel || (typeof action === 'object' && action?.text ? action.text : 'Continue')}
           </Button>
