@@ -17,7 +17,8 @@ import {
   Bike,
   Baby,
   Book,
-  ArrowRight
+  ArrowRight,
+  Search
 } from 'lucide-react';
 import SearchBar from '../components/search/SearchBar';
 import FilterPanel from '../components/search/FilterPanel';
@@ -302,110 +303,199 @@ const CategoryPage = () => {
   // If no categoryName, show categories overview
   if (!categoryName) {
     return (
-      <div className="min-h-screen bg-gray-50 py-8">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          
-          {/* Header */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-            className="text-center mb-12"
-          >
-            <h1 className="text-4xl font-bold text-gray-900 mb-4">Browse Categories</h1>
-            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-              Discover thousands of items available for rent across various categories. 
-              Find exactly what you need from trusted community members.
-            </p>
-          </motion.div>
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/30 to-indigo-50/50 relative overflow-hidden">
+        {/* Background Elements */}
+        <div className="absolute inset-0 bg-gradient-to-br from-blue-600/5 via-purple-600/5 to-pink-600/5"></div>
+        <div className="absolute top-20 left-10 w-72 h-72 bg-gradient-to-br from-blue-400/20 to-purple-500/20 rounded-full blur-3xl animate-pulse"></div>
+        <div className="absolute bottom-20 right-10 w-96 h-96 bg-gradient-to-br from-purple-400/20 to-pink-500/20 rounded-full blur-3xl animate-pulse delay-2000"></div>
+        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-gradient-to-br from-indigo-400/10 to-cyan-400/10 rounded-full blur-3xl animate-pulse delay-4000"></div>
+        
+        <div className="relative z-10 pt-12 pb-16">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            
+            {/* Hero Header */}
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, ease: "easeOut" }}
+              className="text-center mb-20 relative"
+            >
+              <div className="inline-flex items-center px-6 py-3 rounded-full bg-gradient-to-r from-blue-100 via-purple-100 to-pink-100 text-blue-800 text-sm font-semibold mb-6 shadow-lg backdrop-blur-md border border-white/30">
+                <Grid className="w-4 h-4 mr-2" />
+                Explore Our Categories
+              </div>
+              <h1 className="text-5xl md:text-6xl lg:text-7xl font-black bg-gradient-to-r from-gray-900 via-blue-900 to-purple-900 bg-clip-text text-transparent mb-6 tracking-tight leading-tight">
+                Browse Categories
+              </h1>
+              <p className="text-xl md:text-2xl text-gray-700/80 max-w-4xl mx-auto font-medium leading-relaxed">
+                Discover thousands of premium items available for rent across 
+                <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent font-bold"> various categories</span>. 
+                Find exactly what you need from trusted community members.
+              </p>
+              
+              {/* Floating Stats */}
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 0.3 }}
+                className="flex justify-center space-x-12 mt-12"
+              >
+                <div className="text-center">
+                  <div className="text-3xl font-black bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">10K+</div>
+                  <div className="text-sm text-gray-600 font-semibold">Available Items</div>
+                </div>
+                <div className="text-center">
+                  <div className="text-3xl font-black bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">12</div>
+                  <div className="text-sm text-gray-600 font-semibold">Categories</div>
+                </div>
+                <div className="text-center">
+                  <div className="text-3xl font-black bg-gradient-to-r from-pink-600 to-red-600 bg-clip-text text-transparent">98%</div>
+                  <div className="text-sm text-gray-600 font-semibold">Satisfaction</div>
+                </div>
+              </motion.div>
+            </motion.div>
 
-          {/* Categories Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {categories.map((category, index) => {
-              const Icon = category.icon;
-              return (
-                <motion.div
-                  key={category.name}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.6, delay: index * 0.1 }}
-                >
-                  <Link
-                    to={`/category/${category.slug}`}
-                    className="group block"
+            {/* Categories Grid */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 lg:gap-10">
+              {categories.map((category, index) => {
+                const Icon = category.icon;
+                return (
+                  <motion.div
+                    key={category.name}
+                    initial={{ opacity: 0, y: 30, scale: 0.9 }}
+                    animate={{ opacity: 1, y: 0, scale: 1 }}
+                    transition={{ 
+                      duration: 0.7, 
+                      delay: index * 0.15,
+                      type: "spring",
+                      stiffness: 100,
+                      damping: 15
+                    }}
+                    whileHover={{ 
+                      scale: 1.03,
+                      y: -8,
+                      transition: { duration: 0.3 }
+                    }}
                   >
-                    <div className="bg-white rounded-xl shadow-sm hover:shadow-md transition-shadow duration-200 p-6 h-full">
-                      
-                      {/* Icon and Title */}
-                      <div className="flex items-center mb-4">
-                        <div className={`p-3 rounded-lg ${category.color} mr-4`}>
-                          <Icon size={24} />
-                        </div>
-                        <div className="flex-1">
-                          <h3 className="text-lg font-semibold text-gray-900 group-hover:text-blue-600 transition-colors duration-200">
-                            {category.name}
-                          </h3>
-                        </div>
-                        <ArrowRight 
-                          size={20} 
-                          className="text-gray-400 group-hover:text-blue-600 group-hover:translate-x-1 transition-all duration-200" 
-                        />
-                      </div>
+                    <Link
+                      to={`/category/${category.slug}`}
+                      className="group block h-full"
+                    >
+                      <div className="relative bg-white/70 backdrop-blur-xl rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-500 p-8 h-full border border-white/20 overflow-hidden group">
+                        {/* Gradient Overlay */}
+                        <div className="absolute inset-0 bg-gradient-to-br from-white/80 via-white/60 to-transparent opacity-60 group-hover:opacity-80 transition-opacity duration-500"></div>
+                        
+                        {/* Animated Background */}
+                        <div className="absolute -top-10 -right-10 w-32 h-32 bg-gradient-to-br from-blue-400/20 to-purple-500/20 rounded-full blur-2xl group-hover:scale-150 group-hover:opacity-70 transition-all duration-700"></div>
+                        <div className="absolute -bottom-10 -left-10 w-24 h-24 bg-gradient-to-br from-purple-400/20 to-pink-500/20 rounded-full blur-2xl group-hover:scale-125 group-hover:opacity-50 transition-all duration-700 delay-150"></div>
+                        
+                        <div className="relative z-10">
+                          {/* Icon and Title */}
+                          <div className="flex items-center justify-between mb-6">
+                            <div className="flex items-center space-x-4">
+                              <div className="relative">
+                                <div className={`p-4 rounded-2xl ${category.color} shadow-lg group-hover:shadow-xl transition-all duration-300 group-hover:scale-110`}>
+                                  <Icon size={28} className="group-hover:scale-110 transition-transform duration-300" />
+                                </div>
+                                <div className="absolute -inset-1 bg-gradient-to-r from-blue-600/20 to-purple-600/20 rounded-2xl blur opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                              </div>
+                              <div>
+                                <h3 className="text-xl font-bold text-gray-900 group-hover:bg-gradient-to-r group-hover:from-blue-600 group-hover:to-purple-600 group-hover:bg-clip-text group-hover:text-transparent transition-all duration-300">
+                                  {category.name}
+                                </h3>
+                              </div>
+                            </div>
+                            <ArrowRight 
+                              size={22} 
+                              className="text-gray-400 group-hover:text-blue-600 group-hover:translate-x-2 group-hover:scale-110 transition-all duration-300" 
+                            />
+                          </div>
 
-                      {/* Description */}
-                      <p className="text-gray-600 mb-4">
-                        {category.description}
-                      </p>
+                          {/* Description */}
+                          <p className="text-gray-700 mb-6 font-medium leading-relaxed group-hover:text-gray-800 transition-colors duration-300">
+                            {category.description}
+                          </p>
 
-                      {/* Popular Items */}
-                      <div className="space-y-2">
-                        <p className="text-sm font-medium text-gray-900">Popular Items:</p>
-                        <div className="flex flex-wrap gap-2">
-                          {category.items.map((item, idx) => (
-                            <span
-                              key={idx}
-                              className="inline-flex items-center px-2 py-1 rounded-full text-xs bg-gray-100 text-gray-700"
-                            >
-                              {item}
-                            </span>
-                          ))}
+                          {/* Popular Items */}
+                          <div className="space-y-3">
+                            <p className="text-sm font-bold text-gray-900 uppercase tracking-wide">Popular Items:</p>
+                            <div className="flex flex-wrap gap-2">
+                              {category.items.slice(0, 3).map((item, idx) => (
+                                <span
+                                  key={idx}
+                                  className="inline-flex items-center px-3 py-1.5 rounded-full text-xs font-semibold bg-gradient-to-r from-gray-100/80 to-gray-200/80 text-gray-700 backdrop-blur-sm border border-white/30 group-hover:from-blue-100/80 group-hover:to-purple-100/80 group-hover:text-blue-800 transition-all duration-300"
+                                >
+                                  {item}
+                                </span>
+                              ))}
+                              {category.items.length > 3 && (
+                                <span className="inline-flex items-center px-3 py-1.5 rounded-full text-xs font-semibold bg-gradient-to-r from-blue-100/80 to-purple-100/80 text-blue-700 backdrop-blur-sm border border-blue-200/30">
+                                  +{category.items.length - 3} more
+                                </span>
+                              )}
+                            </div>
+                          </div>
                         </div>
                       </div>
-                    </div>
-                  </Link>
-                </motion.div>
-              );
-            })}
+                    </Link>
+                  </motion.div>
+                );
+              })}
           </div>
 
-          {/* Call to Action */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.8 }}
-            className="mt-16 text-center"
-          >
-            <div className="bg-gradient-to-r from-blue-600 to-purple-600 rounded-2xl p-8 text-white">
-              <h2 className="text-3xl font-bold mb-4">Can't Find What You're Looking For?</h2>
-              <p className="text-xl mb-6 opacity-90">
-                Use our advanced search to find specific items or browse all available listings.
-              </p>
-              <div className="space-x-4">
-                <Link
-                  to="/search"
-                  className="inline-block bg-white text-blue-600 px-6 py-3 rounded-lg font-semibold hover:bg-gray-100 transition-colors"
-                >
-                  Advanced Search
-                </Link>
-                <Link
-                  to="/listings"
-                  className="inline-block border-2 border-white text-white px-6 py-3 rounded-lg font-semibold hover:bg-white hover:text-blue-600 transition-colors"
-                >
-                  Browse All Items
-                </Link>
+            {/* Call to Action */}
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 1.2 }}
+              className="mt-20"
+            >
+              <div className="relative bg-gradient-to-br from-blue-600 via-purple-600 to-indigo-700 rounded-3xl p-12 text-white overflow-hidden shadow-2xl">
+                {/* Background Effects */}
+                <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-br from-white/10 to-transparent"></div>
+                <div className="absolute -top-20 -right-20 w-80 h-80 bg-gradient-to-br from-white/10 to-purple-500/20 rounded-full blur-3xl"></div>
+                <div className="absolute -bottom-20 -left-20 w-64 h-64 bg-gradient-to-br from-blue-400/20 to-white/10 rounded-full blur-3xl"></div>
+                
+                <div className="relative z-10 text-center max-w-4xl mx-auto">
+                  <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.6, delay: 1.4 }}
+                  >
+                    <h2 className="text-4xl md:text-5xl font-black mb-6 bg-gradient-to-r from-white to-blue-100 bg-clip-text text-transparent">
+                      Can't Find What You're Looking For?
+                    </h2>
+                    <p className="text-xl md:text-2xl mb-10 opacity-90 font-medium leading-relaxed">
+                      Use our powerful search tools to find specific items or 
+                      <br className="hidden md:block" />
+                      explore our complete marketplace inventory.
+                    </p>
+                  </motion.div>
+                  
+                  <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.6, delay: 1.6 }}
+                    className="flex flex-col sm:flex-row gap-6 justify-center"
+                  >
+                    <Link
+                      to="/search"
+                      className="group inline-flex items-center justify-center bg-white/95 backdrop-blur-md text-blue-700 px-8 py-4 rounded-2xl font-bold text-lg hover:bg-white hover:scale-105 transform transition-all duration-300 shadow-xl hover:shadow-2xl border border-white/20"
+                    >
+                      <Search className="w-5 h-5 mr-3 group-hover:scale-110 transition-transform duration-300" />
+                      Advanced Search
+                    </Link>
+                    <Link
+                      to="/listings"
+                      className="group inline-flex items-center justify-center border-2 border-white/80 text-white px-8 py-4 rounded-2xl font-bold text-lg hover:bg-white/10 hover:scale-105 hover:border-white transform transition-all duration-300 backdrop-blur-md"
+                    >
+                      <Grid className="w-5 h-5 mr-3 group-hover:scale-110 transition-transform duration-300" />
+                      Browse All Items
+                    </Link>
+                  </motion.div>
+                </div>
               </div>
-            </div>
-          </motion.div>
+            </motion.div>
         </div>
       </div>
     );
