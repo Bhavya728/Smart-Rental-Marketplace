@@ -76,7 +76,7 @@ const BookingCard = ({
         <div className="compact-content">
           <div className="compact-image">
             <img
-              src={booking.listing_id?.images?.[0] || '/placeholder-image.jpg'}
+              src={booking.listing_id?.images?.[0]?.secureUrl || booking.listing_id?.images?.[0]?.url || '/placeholder-image.jpg'}
               alt={booking.listing_id?.title}
             />
             <Badge 
@@ -193,10 +193,7 @@ const BookingCard = ({
   return (
     <Card className={`booking-card ${className}`}>
       <div className="card-content">
-        <div className="booking-image">
-          <img
-            src={booking.listing_id?.images?.[0] || '/placeholder-image.jpg'}
-            alt={booking.listing_id?.title}
+        <div className=\"booking-image\">\n          <img\n            src={booking.listing_id?.images?.[0]?.secureUrl || booking.listing_id?.images?.[0]?.url || '/placeholder-image.jpg'}\n            alt={booking.listing_id?.title}", "oldString"
           />
           <div className="image-overlay">
             <Badge color={getStatusColor(booking.status)}>

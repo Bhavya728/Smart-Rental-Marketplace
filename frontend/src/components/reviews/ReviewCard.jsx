@@ -164,7 +164,7 @@ const ReviewCard = ({
       {showProperty && property_id && (
         <div className="property-info">
           <img 
-            src={property_id.images?.[0]?.url || '/placeholder-property.png'} 
+            src={property_id.images?.[0]?.secureUrl || property_id.images?.[0]?.url || '/placeholder-property.png'} 
             alt={property_id.title}
             className="property-image"
           />

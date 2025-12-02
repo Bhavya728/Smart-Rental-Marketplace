@@ -96,7 +96,7 @@ const BookingConfirmation = () => {
 
               <div className="property-info">
                 <img
-                  src={booking.listing_id?.images?.[0] || '/placeholder-image.jpg'}
+                  src={booking.listing_id?.images?.[0]?.secureUrl || booking.listing_id?.images?.[0]?.url || '/placeholder-image.jpg'}
                   alt={booking.listing_id?.title}
                   className="property-image"
                 />
