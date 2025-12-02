@@ -25,41 +25,41 @@ const StatCard = ({
   const isClickable = !!onClick;
 
   const baseClasses = cn(
-    'bg-white rounded-xl border border-gray-200 transition-all duration-200',
+    'relative bg-white/70 backdrop-blur-xl rounded-2xl border border-white/20 transition-all duration-500 ease-out overflow-hidden group',
     {
-      'default': 'shadow-sm hover:shadow-md',
-      'gradient': 'bg-gradient-to-br from-blue-50 to-indigo-100 border-blue-200',
-      'dark': 'bg-gray-900 border-gray-700 text-white',
-      'success': 'bg-gradient-to-br from-green-50 to-emerald-100 border-green-200',
-      'warning': 'bg-gradient-to-br from-amber-50 to-yellow-100 border-amber-200',
-      'danger': 'bg-gradient-to-br from-red-50 to-rose-100 border-red-200',
-      'info': 'bg-gradient-to-br from-cyan-50 to-sky-100 border-cyan-200'
+      'default': 'shadow-xl hover:shadow-2xl',
+      'gradient': 'bg-gradient-to-br from-blue-50/80 via-indigo-50/60 to-purple-50/80 border-blue-200/50 shadow-xl shadow-blue-200/20',
+      'dark': 'bg-gray-900/90 border-gray-700/50 text-white shadow-xl',
+      'success': 'bg-gradient-to-br from-green-50/80 via-emerald-50/60 to-teal-50/80 border-green-200/50 shadow-xl shadow-green-200/20',
+      'warning': 'bg-gradient-to-br from-amber-50/80 via-yellow-50/60 to-orange-50/80 border-amber-200/50 shadow-xl shadow-amber-200/20',
+      'danger': 'bg-gradient-to-br from-red-50/80 via-rose-50/60 to-pink-50/80 border-red-200/50 shadow-xl shadow-red-200/20',
+      'info': 'bg-gradient-to-br from-cyan-50/80 via-sky-50/60 to-blue-50/80 border-cyan-200/50 shadow-xl shadow-cyan-200/20'
     }[variant],
     {
       'sm': 'p-4',
       'default': 'p-6',
       'lg': 'p-8'
     }[size],
-    isClickable && 'cursor-pointer hover:scale-105 hover:shadow-lg',
+    isClickable && 'cursor-pointer hover:scale-[1.03] hover:-translate-y-2 hover:shadow-2xl',
     loading && 'animate-pulse',
     className
   );
 
   const iconClasses = cn(
-    'rounded-lg flex items-center justify-center',
+    'relative rounded-2xl flex items-center justify-center shadow-lg group-hover:shadow-xl transition-all duration-300 group-hover:scale-110',
     {
       'sm': 'w-8 h-8',
       'default': 'w-12 h-12',
       'lg': 'w-16 h-16'
     }[size],
     {
-      'default': 'bg-blue-100 text-blue-600',
-      'gradient': 'bg-blue-200 text-blue-700',
-      'dark': 'bg-gray-700 text-gray-300',
-      'success': 'bg-green-200 text-green-700',
-      'warning': 'bg-amber-200 text-amber-700',
-      'danger': 'bg-red-200 text-red-700',
-      'info': 'bg-cyan-200 text-cyan-700'
+      'default': 'bg-gradient-to-br from-blue-500 to-indigo-600 text-white',
+      'gradient': 'bg-gradient-to-br from-blue-600 to-purple-700 text-white',
+      'dark': 'bg-gradient-to-br from-gray-700 to-gray-800 text-gray-200',
+      'success': 'bg-gradient-to-br from-green-500 to-emerald-600 text-white',
+      'warning': 'bg-gradient-to-br from-amber-500 to-orange-600 text-white',
+      'danger': 'bg-gradient-to-br from-red-500 to-rose-600 text-white',
+      'info': 'bg-gradient-to-br from-cyan-500 to-blue-600 text-white'
     }[variant]
   );
 
@@ -136,19 +136,34 @@ const StatCard = ({
       tabIndex={isClickable ? 0 : undefined}
       {...props}
     >
-      {/* Header with title and icon */}
-      <div className="flex items-center justify-between mb-4">
-        <h3 className={titleClasses}>{title}</h3>
-        {Icon && (
-          <div className={iconClasses}>
-            <Icon className={size === 'sm' ? 'w-4 h-4' : size === 'lg' ? 'w-8 h-8' : 'w-6 h-6'} />
-          </div>
-        )}
-      </div>
+      {/* Background Effects */}
+      <div className="absolute inset-0 bg-gradient-to-br from-white/80 via-white/60 to-transparent opacity-60 group-hover:opacity-80 transition-opacity duration-500"></div>
+      <div className="absolute -top-10 -right-10 w-32 h-32 bg-gradient-to-br from-blue-400/20 to-purple-500/20 rounded-full blur-2xl group-hover:scale-150 group-hover:opacity-70 transition-all duration-700"></div>
+      <div className="absolute -bottom-10 -left-10 w-24 h-24 bg-gradient-to-br from-purple-400/20 to-pink-500/20 rounded-full blur-2xl group-hover:scale-125 group-hover:opacity-50 transition-all duration-700 delay-150"></div>
+      
+      <div className="relative z-10">
+        {/* Header with title and icon */}
+        <div className="flex items-center justify-between mb-4">
+          <h3 className={titleClasses}>{title}</h3>
+          {Icon && (
+            <div className="relative">
+              <div className={iconClasses}>
+                <Icon className={cn(
+                  size === 'sm' ? 'w-4 h-4' : size === 'lg' ? 'w-8 h-8' : 'w-6 h-6',
+                  'group-hover:scale-110 transition-transform duration-300'
+                )} />
+              </div>
+              <div className="absolute -inset-1 bg-gradient-to-r from-blue-600/20 to-purple-600/20 rounded-2xl blur opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+            </div>
+          )}
+        </div>
 
-      {/* Main value */}
-      <div className="space-y-2">
-        <div className={valueClasses}>{value}</div>
+        {/* Main value */}
+        <div className="space-y-2">
+          <div className={cn(
+            valueClasses,
+            'group-hover:bg-gradient-to-r group-hover:from-blue-600 group-hover:to-purple-600 group-hover:bg-clip-text group-hover:text-transparent transition-all duration-300'
+          )}>{value}</div>
         
         {/* Subtitle */}
         {subtitle && (
@@ -174,14 +189,15 @@ const StatCard = ({
             )}
           </div>
         )}
-      </div>
-
-      {/* Custom children content */}
-      {children && (
-        <div className="mt-4 pt-4 border-t border-gray-200">
-          {children}
         </div>
-      )}
+
+        {/* Custom children content */}
+        {children && (
+          <div className="mt-4 pt-4 border-t border-gray-200">
+            {children}
+          </div>
+        )}
+      </div>
     </div>
   );
 };

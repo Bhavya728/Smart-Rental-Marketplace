@@ -339,50 +339,60 @@ export const PricingCard = ({
   return (
     <Card 
       className={cn(
-        'relative',
-        popular && 'border-blue-500 border-2',
+        'relative group',
+        popular && 'border-blue-500/50 border-2 shadow-blue-500/25',
         className
       )} 
+      hover
+      variant={popular ? 'gradient' : 'default'}
       {...props}
     >
       {popular && (
-        <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
-          <span className="bg-blue-500 text-white px-3 py-1 text-sm font-medium rounded-full">
-            Popular
+        <div className="absolute -top-4 left-1/2 transform -translate-x-1/2 z-20">
+          <span className="bg-gradient-to-r from-blue-500 to-purple-600 text-white px-4 py-2 text-sm font-bold rounded-full shadow-lg">
+            Most Popular
           </span>
         </div>
       )}
       
-      <div className="space-y-6">
-        <div className="text-center">
-          <h3 className="text-lg font-semibold text-gray-900">{title}</h3>
+      <div className="relative z-10 space-y-6">
+        <div className="text-center space-y-3">
+          <h3 className="text-xl font-bold text-gray-900 group-hover:bg-gradient-to-r group-hover:from-blue-600 group-hover:to-purple-600 group-hover:bg-clip-text group-hover:text-transparent transition-all duration-300">
+            {title}
+          </h3>
           {description && (
-            <p className="text-sm text-gray-600 mt-1">{description}</p>
+            <p className="text-gray-700 font-medium group-hover:text-gray-800 transition-colors duration-300">
+              {description}
+            </p>
           )}
         </div>
         
         <div className="text-center">
-          <span className="text-4xl font-bold text-gray-900">{price}</span>
+          <span className="text-5xl font-black bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent group-hover:from-blue-600 group-hover:to-purple-600 transition-all duration-300">
+            {price}
+          </span>
           {period && (
-            <span className="text-gray-600 ml-1">/{period}</span>
+            <span className="text-gray-600 ml-2 font-semibold">/{period}</span>
           )}
         </div>
         
         {features.length > 0 && (
           <ul className="space-y-3">
             {features.map((feature, index) => (
-              <li key={index} className="flex items-center">
-                <svg className="w-4 h-4 text-green-500 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                </svg>
-                <span className="text-sm text-gray-600">{feature}</span>
+              <li key={index} className="flex items-center space-x-3">
+                <div className="w-5 h-5 bg-gradient-to-br from-green-500 to-emerald-600 rounded-full flex items-center justify-center flex-shrink-0">
+                  <svg className="w-3 h-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+                  </svg>
+                </div>
+                <span className="text-gray-700 font-medium">{feature}</span>
               </li>
             ))}
           </ul>
         )}
         
         {action && (
-          <div className="pt-4 border-t border-gray-200">
+          <div className="pt-4">
             {action}
           </div>
         )}

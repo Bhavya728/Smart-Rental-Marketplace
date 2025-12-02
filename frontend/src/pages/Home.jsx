@@ -169,16 +169,22 @@ const Home = () => {
           {features.map((feature, index) => {
             const Icon = feature.icon;
             return (
-              <Card key={index} variant="elevated" className="text-center p-6 sm:p-8 lg:p-10 group hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-3 hover:scale-105 relative overflow-hidden">
-                <div className="absolute inset-0 bg-gradient-to-br from-blue-50/50 via-transparent to-purple-50/30 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+              <Card key={index} variant="gradient" className="text-center p-6 sm:p-8 lg:p-10 group hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-3 hover:scale-105 relative overflow-hidden">
+                {/* Enhanced Background Effects */}
+                <div className="absolute -top-10 -right-10 w-32 h-32 bg-gradient-to-br from-blue-400/20 to-purple-500/20 rounded-full blur-2xl group-hover:scale-150 group-hover:opacity-70 transition-all duration-700"></div>
+                <div className="absolute -bottom-10 -left-10 w-24 h-24 bg-gradient-to-br from-purple-400/20 to-pink-500/20 rounded-full blur-2xl group-hover:scale-125 group-hover:opacity-50 transition-all duration-700 delay-150"></div>
+                
                 <div className="relative z-10">
-                  <div className="w-16 h-16 sm:w-18 sm:h-18 lg:w-20 lg:h-20 bg-gradient-to-br from-blue-500 via-blue-600 to-indigo-600 rounded-2xl sm:rounded-3xl flex items-center justify-center mx-auto mb-6 sm:mb-8 shadow-xl shadow-blue-500/30 group-hover:shadow-2xl group-hover:shadow-blue-500/40 transition-all duration-500 group-hover:scale-110">
-                    <Icon className="w-8 h-8 sm:w-9 sm:h-9 lg:w-10 lg:h-10 text-white" />
+                  <div className="relative">
+                    <div className="w-16 h-16 sm:w-18 sm:h-18 lg:w-20 lg:h-20 bg-gradient-to-br from-blue-500 via-blue-600 to-indigo-600 rounded-2xl sm:rounded-3xl flex items-center justify-center mx-auto mb-6 sm:mb-8 shadow-xl shadow-blue-500/30 group-hover:shadow-2xl group-hover:shadow-blue-500/40 transition-all duration-500 group-hover:scale-110">
+                      <Icon className="w-8 h-8 sm:w-9 sm:h-9 lg:w-10 lg:h-10 text-white group-hover:scale-110 transition-transform duration-300" />
+                    </div>
+                    <div className="absolute -inset-2 bg-gradient-to-r from-blue-600/20 to-purple-600/20 rounded-3xl blur opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                   </div>
-                  <h3 className="text-xl sm:text-2xl font-bold text-gray-900 mb-3 sm:mb-4 tracking-tight">
+                  <h3 className="text-xl sm:text-2xl font-bold text-gray-900 mb-3 sm:mb-4 tracking-tight group-hover:bg-gradient-to-r group-hover:from-blue-600 group-hover:to-purple-600 group-hover:bg-clip-text group-hover:text-transparent transition-all duration-300">
                     {feature.title}
                   </h3>
-                  <p className="text-gray-700/90 leading-relaxed font-medium text-base sm:text-lg">
+                  <p className="text-gray-700/90 leading-relaxed font-medium text-base sm:text-lg group-hover:text-gray-800 transition-colors duration-300">
                     {feature.description}
                   </p>
                 </div>
@@ -202,11 +208,17 @@ const Home = () => {
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4 sm:gap-6 lg:gap-8">
           {categories.map((category, index) => (
             <Link key={index} to={`/category/${category.name.toLowerCase().replace(/\s/g, '-')}`}>
-              <Card variant="glass" className="text-center p-4 sm:p-6 lg:p-8 group hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2 hover:scale-105 cursor-pointer backdrop-blur-md border border-white/40">
-                <div className="text-3xl sm:text-4xl lg:text-5xl mb-3 sm:mb-4 lg:mb-5 group-hover:scale-125 transition-transform duration-300">{category.icon}</div>
-                <h3 className="font-bold text-gray-900 mb-2 text-sm sm:text-base lg:text-lg tracking-tight line-clamp-2">{category.name}</h3>
-                <div className="inline-flex items-center px-2 sm:px-3 py-1 rounded-full bg-blue-100/80 text-blue-800 text-xs sm:text-sm font-semibold">
-                  {category.count} items
+              <Card variant="gradient" className="text-center p-4 sm:p-6 lg:p-8 group hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2 hover:scale-105 cursor-pointer backdrop-blur-md border border-white/40 relative overflow-hidden">
+                {/* Enhanced Background Effects */}
+                <div className="absolute -top-6 -right-6 w-20 h-20 bg-gradient-to-br from-blue-400/20 to-purple-500/20 rounded-full blur-xl group-hover:scale-150 group-hover:opacity-70 transition-all duration-700"></div>
+                <div className="absolute -bottom-6 -left-6 w-16 h-16 bg-gradient-to-br from-purple-400/20 to-pink-500/20 rounded-full blur-xl group-hover:scale-125 group-hover:opacity-50 transition-all duration-700 delay-100"></div>
+                
+                <div className="relative z-10">
+                  <div className="text-3xl sm:text-4xl lg:text-5xl mb-3 sm:mb-4 lg:mb-5 group-hover:scale-125 transition-transform duration-300 filter group-hover:drop-shadow-lg">{category.icon}</div>
+                  <h3 className="font-bold text-gray-900 mb-2 text-sm sm:text-base lg:text-lg tracking-tight line-clamp-2 group-hover:bg-gradient-to-r group-hover:from-blue-600 group-hover:to-purple-600 group-hover:bg-clip-text group-hover:text-transparent transition-all duration-300">{category.name}</h3>
+                  <div className="inline-flex items-center px-2 sm:px-3 py-1 rounded-full bg-gradient-to-r from-blue-100/80 to-purple-100/80 text-blue-800 text-xs sm:text-sm font-semibold backdrop-blur-sm border border-blue-200/30 group-hover:from-blue-200/80 group-hover:to-purple-200/80 group-hover:text-blue-900 transition-all duration-300">
+                    {category.count} items
+                  </div>
                 </div>
               </Card>
             </Link>

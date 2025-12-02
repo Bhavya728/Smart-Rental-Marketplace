@@ -7,14 +7,22 @@ import { cn } from '../../utils/cn';
 
 // Skeleton component for loading state
 const ListingCardSkeleton = () => (
-  <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden animate-pulse">
-    <div className="aspect-w-16 aspect-h-10 bg-gray-300"></div>
-    <div className="p-4 space-y-3">
-      <div className="h-4 bg-gray-300 rounded w-3/4"></div>
-      <div className="h-3 bg-gray-300 rounded w-1/2"></div>
-      <div className="flex justify-between">
-        <div className="h-3 bg-gray-300 rounded w-1/4"></div>
-        <div className="h-4 bg-gray-300 rounded w-1/3"></div>
+  <div className="relative bg-white/70 backdrop-blur-xl rounded-2xl shadow-xl border border-white/20 overflow-hidden animate-pulse group">
+    {/* Gradient Overlay */}
+    <div className="absolute inset-0 bg-gradient-to-br from-white/80 via-white/60 to-transparent opacity-60"></div>
+    
+    {/* Animated Background */}
+    <div className="absolute -top-10 -right-10 w-32 h-32 bg-gradient-to-br from-blue-400/20 to-purple-500/20 rounded-full blur-2xl"></div>
+    
+    <div className="relative z-10">
+      <div className="aspect-w-16 aspect-h-10 bg-gradient-to-br from-gray-200 to-gray-300 rounded-t-2xl h-52"></div>
+      <div className="p-6 space-y-4">
+        <div className="h-6 bg-gradient-to-r from-gray-200 to-gray-300 rounded-lg w-3/4"></div>
+        <div className="h-4 bg-gradient-to-r from-gray-200 to-gray-300 rounded w-1/2"></div>
+        <div className="flex justify-between items-center">
+          <div className="h-4 bg-gradient-to-r from-gray-200 to-gray-300 rounded w-1/4"></div>
+          <div className="h-6 bg-gradient-to-r from-gray-200 to-gray-300 rounded-lg w-1/3"></div>
+        </div>
       </div>
     </div>
   </div>
@@ -172,7 +180,7 @@ const SearchResults = forwardRef(({
             variants={itemVariants}
             transition={{ delay: index * 0.05 }}
             className={cn(
-              viewMode === 'list' && "bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden"
+              viewMode === 'list' && "relative bg-white/70 backdrop-blur-xl rounded-2xl shadow-xl border border-white/20 overflow-hidden"
             )}
           >
             {viewMode === 'grid' ? (
